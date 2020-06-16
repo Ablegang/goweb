@@ -6,14 +6,10 @@ import (
 	"net/http"
 	"runtime"
 	"time"
-
-	"github.com/sirupsen/logrus"
 )
 
 func main() {
-	logrus.Println(1)
-	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Llongfile | log.Lmsgprefix)
-	log.Println("test")
+
 	//webServe()
 	//basic()
 }
