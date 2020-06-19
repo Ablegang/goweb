@@ -1,5 +1,3 @@
-// 根据此模板，同理
-
 package loghooks
 
 import (

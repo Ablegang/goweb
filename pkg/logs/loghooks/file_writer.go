@@ -77,7 +77,7 @@ func (writer *FileWriter) Fire(entry *logrus.Entry) error {
 
 	// 写入日志
 	// 自己实现写入，而不使用 logrus 的 output ，有以下两个原因
-	// 1、阅读 logrus 的源码可以发现，当 Hook 的 Fire 被执行时，entry.logger 是处于 Lock 状态的，所以在 Hook 内，无法 SetOutput
+	// 1、阅读 logrus 的源码可以发现，当 Hook 的 Fire 被执行时，entry.logger 处于 Lock 状态，所以在 Hook 内 SetOutput 会引发死锁
 	// 2、就算设置了 output ，也难以处理 f.Close
 	b, _ := writer.EntryFormatter.Format(entry)
 	_, err = f.Write(b)
