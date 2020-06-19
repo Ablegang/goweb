@@ -1,7 +1,6 @@
 package loghooks
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,13 +27,12 @@ func (e *emailNotify) Levels() []logrus.Level {
 
 // 运行 Hook 逻辑
 func (e *emailNotify) Fire(entry *logrus.Entry) error {
-	b, err := entry.Logger.Formatter.Format(entry)
+	_, err := entry.Logger.Formatter.Format(entry)
 	if err != nil {
 		return err
 	}
 
 	// 邮件通知逻辑...
-	fmt.Println("Email notify hook : ", string(b))
 
 	return nil
 }

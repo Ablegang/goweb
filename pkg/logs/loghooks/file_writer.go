@@ -44,7 +44,7 @@ var _ logrus.Hook = &FileWriter{}
 func NewFileWriter() *FileWriter {
 	return &FileWriter{
 		"daily",
-		"storage/logs/",
+		"storage/logs/custom/",
 		"2006-01-02.txt",
 		&logrus.JSONFormatter{
 			TimestampFormat: time.RFC3339Nano, // 含纳秒
