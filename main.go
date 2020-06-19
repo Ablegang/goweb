@@ -2,16 +2,46 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"goweb/pkg/logs/loghooks"
 	"net/http"
+	"os"
 	"runtime"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
-func main() {
+func init() {
+	// 直接使用 log 包的函数，包内部会实例化一个 std 作为通用 logger
+	// std 是指针类型，且是包变量，程序运行时就已经注册
+	// 设置日志格式
+	log.SetFormatter(&log.JSONFormatter{
+		TimestampFormat: time.RFC3339Nano, // 含纳秒
+	})
 
-	//webServe()
-	//basic()
+	log.SetLevel(log.TraceLevel)
+
+	// 注册 Hooks...
+	log.AddHook(loghooks.NewEmailNotify())
+	log.AddHook(loghooks.NewFileWriter())
+	log.AddHook(&loghooks.FileWriter{
+		LogMode:          "single",
+		Dir:              "storage/logs-test/",
+		FileNameFormater: "logs.txt",
+		EntryFormatter: &log.JSONFormatter{
+			TimestampFormat: time.RFC3339Nano, // 含纳秒
+		},
+		HookLevels: log.AllLevels,
+		Perm:       os.FileMode(0777),
+	})
+}
+
+func main() {
+	log.WithField("xxxxxx", "9999999").Infoln("9999999999")
+	log.Debugln("88888")
+	log.Traceln("-1-1-1-1-1-1-1-1-")
+	log.Exit(2)
+	webServe()
 }
 
 func webServe() {

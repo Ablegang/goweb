@@ -51,7 +51,7 @@ type TextFormatter struct {
 	// 打印时的时间格式
 	TimestampFormat string
 
-	// 默认 fields 是排序的后再记录的，但对于一些 log 非常频繁且没有使用 json formatter 的情况，可能需要禁用排序
+	// 默认 fields 是排序的后再记录的，但对于一些 logs 非常频繁且没有使用 json formatter 的情况，可能需要禁用排序
 	DisableSorting bool
 
 	// 可以指定一个排序的自定义逻辑，如果未指定，则默认使用 sort.Strings
@@ -66,7 +66,7 @@ type TextFormatter struct {
 	// 如果为 true，则 QuoteEmptyFields 会将空字段括在引号中
 	QuoteEmptyFields bool
 
-	// 是否将 log 输出到 terminal
+	// 是否将 logs 输出到 terminal
 	isTerminal bool
 
 	// FieldMap 允许用户自定义默认字段的键名称
@@ -247,7 +247,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *Entry, keys []strin
 	}
 
 	// Remove a single newline if it already exists in the message to keep
-	// the behavior of logrus text_formatter the same as the stdlib log package
+	// the behavior of logrus text_formatter the same as the stdlib logs package
 	entry.Message = strings.TrimSuffix(entry.Message, "\n")
 
 	caller := ""

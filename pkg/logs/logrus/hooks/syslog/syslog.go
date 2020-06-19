@@ -5,7 +5,7 @@ import (
 	"log/syslog"
 	"os"
 
-	"goweb/pkg/log/logrus"
+	"goweb/pkg/logs/logrus"
 )
 
 // SyslogHook to send logs via syslog.
@@ -15,9 +15,9 @@ type SyslogHook struct {
 	SyslogRaddr   string
 }
 
-// Creates a hook to be added to an instance of log. This is called with
+// Creates a hook to be added to an instance of logs. This is called with
 // `hook, err := NewSyslogHook("udp", "localhost:514", syslog.LOG_DEBUG, "")`
-// `if err == nil { log.Hooks.Add(hook) }`
+// `if err == nil { logs.Hooks.Add(hook) }`
 func NewSyslogHook(network, raddr string, priority syslog.Priority, tag string) (*SyslogHook, error) {
 	w, err := syslog.Dial(network, raddr, priority, tag)
 	return &SyslogHook{w, network, raddr}, err

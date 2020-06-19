@@ -1,85 +1,108 @@
 package loghooks
 
 import (
-	"goweb/pkg/logs/logrus"
+	"errors"
+	"github.com/sirupsen/logrus"
 	"os"
 	"time"
 )
 
-type FileWrite struct {
+type FileWriter struct {
 	// 日志模式
-	LogMode          bool
-	Dir              string
+	// daily 指文件按日切分，默认
+	// single 指日志存放在单一文件内
+	LogMode string
+
+	// 日志文件存放目录
+	// 默认为 storage/logs/
+	// 注意这里最后一定要加上斜杠
+	Dir string
+
+	// 日志文件名格式
+	// single 时，此参数就是日志文件名
+	// daily 时，此参数则为 time.Now().Format 的参数
+	// 默认为 2006-01-02.txt
 	FileNameFormater string
 
+	// 每一条日志的格式
+	// 默认是 JSONFormatter
+	// 自定义这个值时，请参考 logrus 的 Formatter
+	EntryFormatter logrus.Formatter
+
+	// 要将当前 Hook 应用到 logrus 的哪些级别里
+	// 注意，logrus Std 默认的 Level 是 InfoLevel，所以想要开启 Debug 和 Trace ，需要自己设置下
+	HookLevels []logrus.Level
+
+	// 默认权限，默认是 0777
+	// 这个一定要设置合理，否则无法写入
+	Perm os.FileMode
 }
 
 // 检查是否已实现 Hook 接口
-var _ logrus.Hook = &FileWrite{}
+var _ logrus.Hook = &FileWriter{}
 
-func NewFileWrite() *FileWrite {
-	return &FileWrite{}
+func NewFileWriter() *FileWriter {
+	return &FileWriter{
+		"daily",
+		"storage/logs/",
+		"2006-01-02.txt",
+		&logrus.JSONFormatter{
+			TimestampFormat: time.RFC3339Nano, // 含纳秒
+		},
+		logrus.AllLevels,
+		os.FileMode(0777),
+	}
 }
 
 // 注册到所有级别
-func (fileCut *FileWrite) Levels() []logrus.Level {
-	return logrus.AllLevels
+func (writer *FileWriter) Levels() []logrus.Level {
+	return writer.HookLevels
 }
 
-// 包内全局变量初始化
-var (
-	f *os.File
-
-	// 文件相对路径
-	logsDir = "storage/logs/"
-	logFile = logsDir + time.Now().Format("2006-01-02") + ".txt"
-)
-
 // 日志切割
-func (fileCut *FileWrite) Fire(entry *logrus.Entry) error {
+func (writer *FileWriter) Fire(entry *logrus.Entry) error {
 
-	if f == nil {
-		// 首次启动，尚未打开过 File
-		f = open(logFile)
+	// 建立目录
+	_ = os.MkdirAll(writer.Dir, writer.Perm)
+
+	// 目录授权
+	_ = os.Chmod(writer.Dir, writer.Perm)
+
+	// 日志文件
+	f, err := writer.open()
+	if err != nil {
+		return err
 	}
+	defer f.Close()
 
-	// 触发 Hook 时的时间作为文件名，如果与全局变量不同，则以新文件名为准
-	newFile := logsDir + time.Now().Format("2006-01-02") + ".txt"
-	if logFile != newFile {
-		// 日志文件名已经更新，先关闭老文件
-		f.Close()
-
-		// 新文件名替换给全局变量
-		logFile = newFile
-
-		f = open(logFile)
+	// 写入日志
+	b, _ := writer.EntryFormatter.Format(entry)
+	_, err = f.Write(b)
+	if err != nil {
+		return err
 	}
-
-	entry.Logger.SetOutput(f)
 
 	return nil
 }
 
 // 打开文件
-func open(filePath string) *os.File {
-	flag := os.O_APPEND | os.O_RDWR | os.O_CREATE
-	perm := os.FileMode(0777)
-	f, err := os.OpenFile(filePath, flag, perm)
-	if err != nil {
-		if os.IsNotExist(err) {
-			_ = os.MkdirAll(logsDir, perm)
-		}
+func (writer *FileWriter) open() (*os.File, error) {
 
-		if os.IsPermission(err) {
-			_ = os.Chmod(logsDir, perm)
-			_ = os.Chmod(filePath, perm)
-		}
-
-		f, err = os.OpenFile(filePath, flag, perm)
-		if err != nil {
-			panic("日志文件无法创建，请检查 storage 目录的权限")
-		}
+	// 根据日志模式取日志文件名
+	fileName := ""
+	if writer.LogMode == "daily" {
+		fileName = time.Now().Format(writer.FileNameFormater)
+	} else if writer.LogMode == "single" {
+		fileName = writer.FileNameFormater
+	} else {
+		return nil, errors.New("错误的 LogMode")
 	}
 
-	return f
+	// 打开文件
+	f, err := os.OpenFile(writer.Dir+fileName, os.O_APPEND|os.O_RDWR|os.O_CREATE, writer.Perm)
+	if err != nil {
+		return nil, err
+	}
+
+	return f, nil
 }

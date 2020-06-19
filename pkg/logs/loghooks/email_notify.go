@@ -1,15 +1,21 @@
+// 根据此模板，同理
+
 package loghooks
 
 import (
 	"fmt"
-	"goweb/pkg/log/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 type emailNotify struct {
 	// 一些需要初始化的配置...
 }
 
-func newEmailNotify() *emailNotify {
+// 检测是否实现了 Hook 接口
+var _ logrus.Hook = &emailNotify{}
+
+// 获取一个 emailNotify
+func NewEmailNotify() *emailNotify {
 	return &emailNotify{}
 }
 
@@ -22,10 +28,15 @@ func (e *emailNotify) Levels() []logrus.Level {
 	}
 }
 
+// 运行 Hook 逻辑
 func (e *emailNotify) Fire(entry *logrus.Entry) error {
 	b, err := entry.Logger.Formatter.Format(entry)
 	if err != nil {
-		logrus.Panic(err)
+		return err
 	}
-	fmt.Println()
+
+	// 邮件通知逻辑...
+	fmt.Println("Email notify hook : ", string(b))
+
+	return nil
 }

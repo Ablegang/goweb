@@ -150,7 +150,7 @@ func init() {
   // Can be any io.Writer, see below for File example
   log.SetOutput(os.Stdout)
 
-  // Only log the warning severity or above.
+  // Only logs the warning severity or above.
   log.SetLevel(log.WarnLevel)
 }
 
@@ -193,20 +193,20 @@ import (
   "github.com/sirupsen/logrus"
 )
 
-// Create a new instance of the log. You can have any number of instances.
+// Create a new instance of the logs. You can have any number of instances.
 var log = logrus.New()
 
 func main() {
   // The API for setting attributes is a little different than the package level
-  // exported log. See Godoc.
+  // exported logs. See Godoc.
   log.Out = os.Stdout
 
   // You could set this to any `io.Writer` such as a file
-  // file, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+  // file, err := os.OpenFile("logrus.logs", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
   // if err == nil {
-  //  log.Out = file
+  //  logs.Out = file
   // } else {
-  //  log.Info("Failed to log to file, using default stderr")
+  //  logs.Info("Failed to logs to file, using default stderr")
   // }
 
   log.WithFields(logrus.Fields{
@@ -268,7 +268,7 @@ import (
   log "github.com/sirupsen/logrus"
   "gopkg.in/gemnasium/logrus-airbrake-hook.v2" // the package is named "airbrake"
   logrus_syslog "github.com/sirupsen/logrus/hooks/syslog"
-  "log/syslog"
+  "logs/syslog"
 )
 
 func init() {
@@ -310,7 +310,7 @@ You can set the logging level on a `Logger`, then it will only log entries with
 that severity or anything above it:
 
 ```go
-// Will log anything that is info or above (warn, error, fatal, panic). Default.
+// Will logs anything that is info or above (warn, error, fatal, panic). Default.
 log.SetLevel(log.InfoLevel)
 ```
 
@@ -417,7 +417,7 @@ w := logger.Writer()
 defer w.Close()
 
 srv := http.Server{
-    // create a stdlib log.Logger that writes to
+    // create a stdlib logs.Logger that writes to
     // logrus.Logger.
     ErrorLog: log.New(w, "", 0),
 }
@@ -432,9 +432,9 @@ This means that we can override the standard library logger easily:
 logger := logrus.New()
 logger.Formatter = &logrus.JSONFormatter{}
 
-// Use logrus for standard log output
-// Note that `log` here references stdlib's log
-// Not logrus imported under the name `log`.
+// Use logrus for standard logs output
+// Note that `logs` here references stdlib's logs
+// Not logrus imported under the name `logs`.
 log.SetOutput(logger.Writer())
 ```
 

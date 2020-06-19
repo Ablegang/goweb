@@ -11,7 +11,7 @@ func (logger *Logger) Writer() *io.PipeWriter {
 	return logger.WriterLevel(InfoLevel)
 }
 
-// 此方法返回一个 io.Writer，用于写入任意给定日志级别的文本到 log
+// 此方法返回一个 io.Writer，用于写入任意给定日志级别的文本到 logs
 // writer 的每一行写入都会以指定的 formatter 作为格式，且会触发相关 Hook
 // writer 是 io.Pipe 的一部分，写入完成后，writer 需要由调用者关闭
 func (logger *Logger) WriterLevel(level Level) *io.PipeWriter {

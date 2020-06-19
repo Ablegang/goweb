@@ -7,13 +7,13 @@ import (
 )
 
 var (
-	// 默认初始化的 log，但只能在包内使用
-	// 这个默认的 log 主要用于一些直接调用了包函数的操作
+	// 默认初始化的 logs，但只能在包内使用
+	// 这个默认的 logs 主要用于一些直接调用了包函数的操作
 	std = New()
 )
 
-// 返回 std ，这里返回的指针，所以多次使用此方法取 std，拿到的都是同一个 log
-// 看起来不是线程安全的，但实际上 log 结构体本身就用了 mutex，所有方法都是线程安全的
+// 返回 std ，这里返回的指针，所以多次使用此方法取 std，拿到的都是同一个 logs
+// 看起来不是线程安全的，但实际上 logs 结构体本身就用了 mutex，所有方法都是线程安全的
 // 除非设置了 std.SetNoLock()
 func StandardLogger() *Logger {
 	return std
@@ -79,7 +79,7 @@ func WithTime(t time.Time) *Entry {
 	return std.WithTime(t)
 }
 
-// 调用默认 log 的 trace
+// 调用默认 logs 的 trace
 func Trace(args ...interface{}) {
 	std.Trace(args...)
 }
@@ -151,7 +151,7 @@ func Panicf(format string, args ...interface{}) {
 func Fatalf(format string, args ...interface{}) {
 	std.Fatalf(format, args...)
 }
-// Traceln logs a message at level Trace on the standard log.
+// Traceln logs a message at level Trace on the standard logs.
 func Traceln(args ...interface{}) {
 	std.Traceln(args...)
 }

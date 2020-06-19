@@ -16,13 +16,13 @@ type Logger struct {
 	// 当然也可以指定为 sentry 、 kafka 等
 	Out io.Writer
 
-	// log 实例的 hooks，hooks 会在特定的日志级别触发
+	// logs 实例的 hooks，hooks 会在特定的日志级别触发
 	// 也可以在特定的 entry 上触发，触发条件，由用户自己设置
 	Hooks LevelHooks
 
 	// 所有 entry 在被输出之前，都会先格式化
 	// 有两个选项，TextFormatter 和 JSONFormatter，TextFormatter 是默认的
-	// 开发环境下，TTY 是 attached 时，控制台输出的 log 是彩色的（色彩代码不会写入文件）
+	// 开发环境下，TTY 是 attached 时，控制台输出的 logs 是彩色的（色彩代码不会写入文件）
 	// Formatter 也可以自己实现，这一点可以看 README
 	Formatter Formatter
 
@@ -70,8 +70,8 @@ func (mw *MutexWrap) Disable() {
 	mw.disabled = true
 }
 
-// log 构建函数
-// 默认构建的 log 实例，formatter 是 TextFormatter，Hooks 是 LevelHooks，level 是 info
+// logs 构建函数
+// 默认构建的 logs 实例，formatter 是 TextFormatter，Hooks 是 LevelHooks，level 是 info
 // 如果需要自定义，可以直接给返回值的属性赋值
 func New() *Logger {
 	return &Logger{
@@ -135,7 +135,7 @@ func (logger *Logger) WithTime(t time.Time) *Entry {
 	return entry.WithTime(t)
 }
 
-// 下列 log、print 系列方法都是以空 entry 实例来执行
+// 下列 logs、print 系列方法都是以空 entry 实例来执行
 
 // 用空 entry 来 Logf
 func (logger *Logger) Logf(level Level, format string, args ...interface{}) {
@@ -296,24 +296,24 @@ func (logger *Logger) SetNoLock() {
 	logger.mu.Disable()
 }
 
-// 返回当前 log 的 level
+// 返回当前 logs 的 level
 // 从指针位置返回 level 值
 func (logger *Logger) level() Level {
 	return Level(atomic.LoadUint32((*uint32)(&logger.Level)))
 }
 
-// 设置 log 的 level
+// 设置 logs 的 level
 // 通过指针将值存储到该内存地址
 func (logger *Logger) SetLevel(level Level) {
 	atomic.StoreUint32((*uint32)(&logger.Level), uint32(level))
 }
 
-// 取 log 的 level
+// 取 logs 的 level
 func (logger *Logger) GetLevel() Level {
 	return logger.level()
 }
 
-// 给 log 添加 hook
+// 给 logs 添加 hook
 func (logger *Logger) AddHook(hook Hook) {
 	logger.mu.Lock()
 	defer logger.mu.Unlock()

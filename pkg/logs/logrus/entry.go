@@ -33,7 +33,7 @@ const (
 
 func init() {
 	// 缓存池，负责字节缓冲
-	// Entry.log 被调用时用到，主要为了 bytes.Buffer 的重用
+	// Entry.logs 被调用时用到，主要为了 bytes.Buffer 的重用
 	bufferPool = &sync.Pool{
 		New: func() interface{} {
 			return new(bytes.Buffer)
@@ -69,7 +69,7 @@ type Entry struct {
 	// 要记录的内容文本内容
 	Message string
 
-	// 调用 entry.log 时会用到，字节缓冲区
+	// 调用 entry.logs 时会用到，字节缓冲区
 	Buffer *bytes.Buffer
 
 	// 用户自定义的 Context
@@ -236,7 +236,7 @@ func (entry Entry) log(level Level, msg string) {
 
 	// Default to now, but allow users to override if they want.
 	//
-	// We don't have to worry about polluting future calls to Entry#log()
+	// We don't have to worry about polluting future calls to Entry#logs()
 	// with this assignment because this function is declared with a
 	// non-pointer receiver.
 	if entry.Time.IsZero() {
@@ -262,7 +262,7 @@ func (entry Entry) log(level Level, msg string) {
 
 	entry.Buffer = nil
 
-	// To avoid Entry#log() returning a value that only would make sense for
+	// To avoid Entry#logs() returning a value that only would make sense for
 	// panic() to use in Entry#Panic(), we avoid the allocation by checking
 	// directly here.
 	if level <= PanicLevel {
@@ -290,7 +290,7 @@ func (entry *Entry) write() {
 		return
 	}
 	if _, err = entry.Logger.Out.Write(serialized); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "Failed to write to log, %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Failed to write to logs, %v\n", err)
 	}
 }
 

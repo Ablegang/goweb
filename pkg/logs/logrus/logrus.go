@@ -90,12 +90,12 @@ var AllLevels = []Level{
 }
 
 // 日志级别
-// 可以以此来给 log 实例设定日志级别
+// 可以以此来给 logs 实例设定日志级别
 const (
 	// 最严重的错误级别，这一类日志级别相关的操作最终会调用到 panic
 	PanicLevel Level = iota
 
-	// 此日志级别会调用 log.Exit(1)
+	// 此日志级别会调用 logs.Exit(1)
 	FatalLevel
 
 	ErrorLevel
