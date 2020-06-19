@@ -26,58 +26,50 @@ func init() {
 	baseTimestamp = time.Now()
 }
 
-// TextFormatter formats logs into text
 type TextFormatter struct {
-	// Set to true to bypass checking for a TTY before outputting colors.
+	// 设置为 true 则在 TTY 上会显示颜色
 	ForceColors bool
 
-	// Force disabling colors.
+	// 设置为 true 则强制禁用 TTY 颜色
 	DisableColors bool
 
-	// Force quoting of all values
+	// 强制引用所有值
 	ForceQuote bool
 
-	// DisableQuote disables quoting for all values.
-	// DisableQuote will have a lower priority than ForceQuote.
-	// If both of them are set to true, quote will be forced on all values.
+	// 禁用所有值的引用，优先级低于 ForceQuote
 	DisableQuote bool
 
-	// Override coloring based on CLICOLOR and CLICOLOR_FORCE. - https://bixense.com/clicolors/
+	// 根据环境变量 CLICOLOR 和 CLICOLOR_FORCE 给颜色 - https://bixense.com/clicolors/
 	EnvironmentOverrideColors bool
 
-	// Disable timestamp logging. useful when output is redirected to logging
-	// system that already adds timestamps.
+	// 禁用时间戳记录，当输出重定向到已添加了时间戳的日志时很有用
 	DisableTimestamp bool
 
-	// Enable logging the full timestamp when a TTY is attached instead of just
-	// the time passed since beginning of execution.
+	// 启用记录 TTY 的完整时间戳，而不仅仅是自开始执行以来经过的时间
 	FullTimestamp bool
 
-	// TimestampFormat to use for display when a full timestamp is printed
+	// 打印时的时间格式
 	TimestampFormat string
 
-	// The fields are sorted by default for a consistent output. For applications
-	// that log extremely frequently and don't use the JSON formatter this may not
-	// be desired.
+	// 默认 fields 是排序的后再记录的，但对于一些 log 非常频繁且没有使用 json formatter 的情况，可能需要禁用排序
 	DisableSorting bool
 
-	// The keys sorting function, when uninitialized it uses sort.Strings.
+	// 可以指定一个排序的自定义逻辑，如果未指定，则默认使用 sort.Strings
 	SortingFunc func([]string)
 
-	// Disables the truncation of the level text to 4 characters.
+	// 禁用 level 文本自动截断
 	DisableLevelTruncation bool
 
-	// PadLevelText Adds padding the level text so that all the levels output at the same length
-	// PadLevelText is a superset of the DisableLevelTruncation option
+	// 是否补齐 level 文本，主要作用是让日志变得整齐
 	PadLevelText bool
 
-	// QuoteEmptyFields will wrap empty fields in quotes if true
+	// 如果为 true，则 QuoteEmptyFields 会将空字段括在引号中
 	QuoteEmptyFields bool
 
-	// Whether the logger's out is to a terminal
+	// 是否将 log 输出到 terminal
 	isTerminal bool
 
-	// FieldMap allows users to customize the names of keys for default fields.
+	// FieldMap 允许用户自定义默认字段的键名称
 	// As an example:
 	// formatter := &TextFormatter{
 	//     FieldMap: FieldMap{
@@ -86,15 +78,15 @@ type TextFormatter struct {
 	//         FieldKeyMsg:   "@message"}}
 	FieldMap FieldMap
 
-	// CallerPrettyfier can be set by the user to modify the content
-	// of the function and file keys in the data when ReportCaller is
-	// activated. If any of the returned value is the empty string the
-	// corresponding key will be removed from fields.
+	// 激活 ReportCaller 时，用户可以设置 Call​​erPrettyfier 来修改数据中函数和文件键的内容
+	// 如果任何返回值是空字符串，对应的键将从字段中删除
 	CallerPrettyfier func(*runtime.Frame) (function string, file string)
 
 	terminalInitOnce sync.Once
 
-	// The max length of the level text, generated dynamically on init
+	// 级别文本的最大长度，在初始化时动态生成
+	// 根据 AllLevels 计算出来的
+	// 这个长度主要是用于补全，见 PadLevelText
 	levelTextMaxLength int
 }
 
@@ -102,7 +94,8 @@ func (f *TextFormatter) init(entry *Entry) {
 	if entry.Logger != nil {
 		f.isTerminal = checkIfTerminal(entry.Logger.Out)
 	}
-	// Get the max length of the level text
+
+	// 设置 levelTextMaxLength
 	for _, level := range AllLevels {
 		levelTextLength := utf8.RuneCount([]byte(level.String()))
 		if levelTextLength > f.levelTextMaxLength {
@@ -126,7 +119,7 @@ func (f *TextFormatter) isColored() bool {
 	return isColored && !f.DisableColors
 }
 
-// Format renders a single log entry
+// 格式化日志条目
 func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	data := make(Fields)
 	for k, v := range entry.Data {
@@ -277,15 +270,15 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *Entry, keys []strin
 
 	switch {
 	case f.DisableTimestamp:
-		fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m%s %-44s ", levelColor, levelText, caller, entry.Message)
+		_, _ = fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m%s %-44s ", levelColor, levelText, caller, entry.Message)
 	case !f.FullTimestamp:
-		fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%04d]%s %-44s ", levelColor, levelText, int(entry.Time.Sub(baseTimestamp)/time.Second), caller, entry.Message)
+		_, _ = fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%04d]%s %-44s ", levelColor, levelText, int(entry.Time.Sub(baseTimestamp)/time.Second), caller, entry.Message)
 	default:
-		fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%s]%s %-44s ", levelColor, levelText, entry.Time.Format(timestampFormat), caller, entry.Message)
+		_, _ = fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%s]%s %-44s ", levelColor, levelText, entry.Time.Format(timestampFormat), caller, entry.Message)
 	}
 	for _, k := range keys {
 		v := data[k]
-		fmt.Fprintf(b, " \x1b[%dm%s\x1b[0m=", levelColor, k)
+		_, _ = fmt.Fprintf(b, " \x1b[%dm%s\x1b[0m=", levelColor, k)
 		f.appendValue(b, v)
 	}
 }

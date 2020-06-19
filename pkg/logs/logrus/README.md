@@ -193,12 +193,12 @@ import (
   "github.com/sirupsen/logrus"
 )
 
-// Create a new instance of the logger. You can have any number of instances.
+// Create a new instance of the log. You can have any number of instances.
 var log = logrus.New()
 
 func main() {
   // The API for setting attributes is a little different than the package level
-  // exported logger. See Godoc.
+  // exported log. See Godoc.
   log.Out = os.Stdout
 
   // You could set this to any `io.Writer` such as a file

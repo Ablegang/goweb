@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// Fields type, used to pass to `WithFields`.
+// Field type
 type Fields map[string]interface{}
 
 // Level type
 type Level uint32
 
-// Convert the Level to a string. E.g. PanicLevel becomes "panic".
+// 根据 Level 返回相应字符串
 func (level Level) String() string {
 	if b, err := level.MarshalText(); err == nil {
 		return string(b)
@@ -21,7 +21,7 @@ func (level Level) String() string {
 	}
 }
 
-// ParseLevel takes a string level and returns the Logrus log level constant.
+// 根据字符串返回 level 值
 func ParseLevel(lvl string) (Level, error) {
 	switch strings.ToLower(lvl) {
 	case "panic":
@@ -44,7 +44,7 @@ func ParseLevel(lvl string) (Level, error) {
 	return l, fmt.Errorf("not a valid logrus Level: %q", lvl)
 }
 
-// UnmarshalText implements encoding.TextUnmarshaler.
+// 根据字符串转换自己的值，接收者本身的值会发生变化
 func (level *Level) UnmarshalText(text []byte) error {
 	l, err := ParseLevel(string(text))
 	if err != nil {
@@ -56,6 +56,7 @@ func (level *Level) UnmarshalText(text []byte) error {
 	return nil
 }
 
+// 根据自身的值，返回相应字符串
 func (level Level) MarshalText() ([]byte, error) {
 	switch level {
 	case TraceLevel:
@@ -77,7 +78,7 @@ func (level Level) MarshalText() ([]byte, error) {
 	return nil, fmt.Errorf("not a valid logrus level %d", level)
 }
 
-// A constant exposing all logging levels
+// 日志级别数组
 var AllLevels = []Level{
 	PanicLevel,
 	FatalLevel,
@@ -88,39 +89,30 @@ var AllLevels = []Level{
 	TraceLevel,
 }
 
-// These are the different logging levels. You can set the logging level to log
-// on your instance of logger, obtained with `logrus.New()`.
+// 日志级别
+// 可以以此来给 log 实例设定日志级别
 const (
-	// PanicLevel level, highest level of severity. Logs and then calls panic with the
-	// message passed to Debug, Info, ...
+	// 最严重的错误级别，这一类日志级别相关的操作最终会调用到 panic
 	PanicLevel Level = iota
-	// FatalLevel level. Logs and then calls `logger.Exit(1)`. It will exit even if the
-	// logging level is set to Panic.
+
+	// 此日志级别会调用 log.Exit(1)
 	FatalLevel
-	// ErrorLevel level. Logs. Used for errors that should definitely be noted.
-	// Commonly used for hooks to send errors to an error tracking service.
+
 	ErrorLevel
-	// WarnLevel level. Non-critical entries that deserve eyes.
 	WarnLevel
-	// InfoLevel level. General operational entries about what's going on inside the
-	// application.
 	InfoLevel
-	// DebugLevel level. Usually only enabled when debugging. Very verbose logging.
 	DebugLevel
-	// TraceLevel level. Designates finer-grained informational events than the Debug.
 	TraceLevel
 )
 
-// Won't compile if StdLogger can't be realized by a log.Logger
+// 主要用于编译检查，检查下面这些结构体是否都实现了 StdLogger 接口
 var (
 	_ StdLogger = &log.Logger{}
 	_ StdLogger = &Entry{}
 	_ StdLogger = &Logger{}
 )
 
-// StdLogger is what your logrus-enabled library should take, that way
-// it'll accept a stdlib logger and a logrus logger. There's no standard
-// interface, this is the closest we get, unfortunately.
+// 此接口规定了 Logger 结构体必须绑定的方法
 type StdLogger interface {
 	Print(...interface{})
 	Printf(string, ...interface{})
@@ -135,7 +127,7 @@ type StdLogger interface {
 	Panicln(...interface{})
 }
 
-// The FieldLogger interface generalizes the Entry and Logger types
+// 此接口目前看好像也没用
 type FieldLogger interface {
 	WithField(key string, value interface{}) *Entry
 	WithFields(fields Fields) *Entry
@@ -176,8 +168,8 @@ type FieldLogger interface {
 	// IsPanicEnabled() bool
 }
 
-// Ext1FieldLogger (the first extension to FieldLogger) is superfluous, it is
-// here for consistancy. Do not use. Use Logger or Entry instead.
+// 这个接口是多余的，为了保持一致性
+// 实际上不会用到这个接口，都会以 Logger 和 Entry 代替
 type Ext1FieldLogger interface {
 	FieldLogger
 	Tracef(format string, args ...interface{})

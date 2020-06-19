@@ -16,7 +16,7 @@ type Logger struct {
 	// 当然也可以指定为 sentry 、 kafka 等
 	Out io.Writer
 
-	// logger 实例的 hooks，hooks 会在特定的日志级别触发
+	// log 实例的 hooks，hooks 会在特定的日志级别触发
 	// 也可以在特定的 entry 上触发，触发条件，由用户自己设置
 	Hooks LevelHooks
 
@@ -29,7 +29,7 @@ type Logger struct {
 	// 是否记录 caller 信息，默认否
 	ReportCaller bool
 
-	// 日志级别
+	// 最低日志级别
 	Level Level
 
 	// 用于保证多个 goroutine 能安全写日志
@@ -70,8 +70,8 @@ func (mw *MutexWrap) Disable() {
 	mw.disabled = true
 }
 
-// logger 构建函数
-// 默认构建的 logger 实例，formatter 是 TextFormatter，Hooks 是 LevelHooks，level 是 info
+// log 构建函数
+// 默认构建的 log 实例，formatter 是 TextFormatter，Hooks 是 LevelHooks，level 是 info
 // 如果需要自定义，可以直接给返回值的属性赋值
 func New() *Logger {
 	return &Logger{
@@ -280,68 +280,73 @@ func (logger *Logger) Panicln(args ...interface{}) {
 	logger.Logln(PanicLevel, args...)
 }
 
+// exit 方法会先执行所有已注册的 Handler
 func (logger *Logger) Exit(code int) {
-	runHandlers()
+	runHandlers() // 这个 handler 是专门用于 exit 的，所以命名为 exitHandler
 	if logger.ExitFunc == nil {
 		logger.ExitFunc = os.Exit
 	}
+
+	// 虽然可以自定义 ExitFunc，但也还是会执行所有已注册的 ExitHandler
 	logger.ExitFunc(code)
 }
 
-//When file is opened with appending mode, it's safe to
-//write concurrently to a file (within 4k message on Linux).
-//In these cases user can choose to disable the lock.
+// 如果使用附加模式写入文件，这种时候可以安全地读写，就可以用下面的方法禁用 Lock
 func (logger *Logger) SetNoLock() {
 	logger.mu.Disable()
 }
 
+// 返回当前 log 的 level
+// 从指针位置返回 level 值
 func (logger *Logger) level() Level {
 	return Level(atomic.LoadUint32((*uint32)(&logger.Level)))
 }
 
-// SetLevel sets the logger level.
+// 设置 log 的 level
+// 通过指针将值存储到该内存地址
 func (logger *Logger) SetLevel(level Level) {
 	atomic.StoreUint32((*uint32)(&logger.Level), uint32(level))
 }
 
-// GetLevel returns the logger level.
+// 取 log 的 level
 func (logger *Logger) GetLevel() Level {
 	return logger.level()
 }
 
-// AddHook adds a hook to the logger hooks.
+// 给 log 添加 hook
 func (logger *Logger) AddHook(hook Hook) {
 	logger.mu.Lock()
 	defer logger.mu.Unlock()
 	logger.Hooks.Add(hook)
 }
 
-// IsLevelEnabled checks if the log level of the logger is greater than the level param
+// 判断日志级别是否被允许
 func (logger *Logger) IsLevelEnabled(level Level) bool {
 	return logger.level() >= level
 }
 
-// SetFormatter sets the logger formatter.
+// 设置 Formatter
 func (logger *Logger) SetFormatter(formatter Formatter) {
 	logger.mu.Lock()
 	defer logger.mu.Unlock()
 	logger.Formatter = formatter
 }
 
-// SetOutput sets the logger output.
+// 设置 output
 func (logger *Logger) SetOutput(output io.Writer) {
 	logger.mu.Lock()
 	defer logger.mu.Unlock()
 	logger.Out = output
 }
 
+// 设置 ReportCaller
 func (logger *Logger) SetReportCaller(reportCaller bool) {
 	logger.mu.Lock()
 	defer logger.mu.Unlock()
 	logger.ReportCaller = reportCaller
 }
 
-// ReplaceHooks replaces the logger hooks and returns the old ones
+// 替换 Hooks，并返回老的 Hooks
 func (logger *Logger) ReplaceHooks(hooks LevelHooks) LevelHooks {
 	logger.mu.Lock()
 	oldHooks := logger.Hooks

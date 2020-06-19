@@ -1,5 +1,3 @@
-// +build !windows,!nacl,!plan9
-
 package syslog
 
 import (
@@ -7,7 +5,7 @@ import (
 	"log/syslog"
 	"os"
 
-	"github.com/sirupsen/logrus"
+	"goweb/pkg/log/logrus"
 )
 
 // SyslogHook to send logs via syslog.
@@ -17,7 +15,7 @@ type SyslogHook struct {
 	SyslogRaddr   string
 }
 
-// Creates a hook to be added to an instance of logger. This is called with
+// Creates a hook to be added to an instance of log. This is called with
 // `hook, err := NewSyslogHook("udp", "localhost:514", syslog.LOG_DEBUG, "")`
 // `if err == nil { log.Hooks.Add(hook) }`
 func NewSyslogHook(network, raddr string, priority syslog.Priority, tag string) (*SyslogHook, error) {

@@ -9,7 +9,7 @@ import (
 
 type fieldKey string
 
-// FieldMap allows customization of the key names for default fields.
+// field 和 json key 的映射
 type FieldMap map[fieldKey]string
 
 func (f FieldMap) resolve(key fieldKey) string {
@@ -22,19 +22,19 @@ func (f FieldMap) resolve(key fieldKey) string {
 
 // JSONFormatter formats logs into parsable json
 type JSONFormatter struct {
-	// TimestampFormat sets the format used for marshaling timestamps.
+	// 时间戳格式
 	TimestampFormat string
 
-	// DisableTimestamp allows disabling automatic timestamps in output
+	// 禁用时间戳记录，当输出重定向到已添加了时间戳的日志时很有用
 	DisableTimestamp bool
 
-	// DisableHTMLEscape allows disabling html escaping in output
+	// DisableHTMLEscape 允许在输出中禁用 HTML 转义
 	DisableHTMLEscape bool
 
-	// DataKey allows users to put all the log entry parameters into a nested dictionary at a given key.
+	// DataKey 允许用户将所有 entry.Data 放入给定键的嵌套字典中
 	DataKey string
 
-	// FieldMap allows users to customize the names of keys for default fields.
+	// FieldMap 允许用户自定义默认字段的键名称
 	// As an example:
 	// formatter := &JSONFormatter{
 	//   	FieldMap: FieldMap{
@@ -46,17 +46,15 @@ type JSONFormatter struct {
 	// }
 	FieldMap FieldMap
 
-	// CallerPrettyfier can be set by the user to modify the content
-	// of the function and file keys in the json data when ReportCaller is
-	// activated. If any of the returned value is the empty string the
-	// corresponding key will be removed from json fields.
+	// 激活 ReportCaller 时，用户可以设置 Call​​erPrettyfier 来修改数据中函数和文件键的内容
+	// 如果任何返回值是空字符串，对应的键将从字段中删除
 	CallerPrettyfier func(*runtime.Frame) (function string, file string)
 
-	// PrettyPrint will indent all json logs
+	// PrettyPrint 将缩进所有 json 日志
 	PrettyPrint bool
 }
 
-// Format renders a single log entry
+// 格式化
 func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	data := make(Fields, len(entry.Data)+4)
 	for k, v := range entry.Data {
