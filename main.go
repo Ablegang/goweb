@@ -1,6 +1,8 @@
 package main
 
-import "goweb/app"
+import (
+	"goweb/app"
+)
 
 func main() {
 	app.Start()
