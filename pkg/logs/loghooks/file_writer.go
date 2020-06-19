@@ -26,11 +26,11 @@ type FileWriter struct {
 
 	// 每一条日志的格式
 	// 默认是 JSONFormatter
-	// 自定义这个值时，请参考 logrus 的 Formatter
+	// 自定义这个值时，请参考 logrus-docs 的 Formatter
 	EntryFormatter logrus.Formatter
 
-	// 要将当前 Hook 应用到 logrus 的哪些级别里
-	// 注意，logrus Std 默认的 Level 是 InfoLevel，所以想要开启 Debug 和 Trace ，需要自己设置下
+	// 要将当前 Hook 应用到 logrus-docs 的哪些级别里
+	// 注意，logrus-docs Std 默认的 Level 是 InfoLevel，所以想要开启 Debug 和 Trace ，需要自己设置下
 	HookLevels []logrus.Level
 
 	// 默认权限，默认是 0777
@@ -76,8 +76,8 @@ func (writer *FileWriter) Fire(entry *logrus.Entry) error {
 	defer f.Close()
 
 	// 写入日志
-	// 自己实现写入，而不使用 logrus 的 output ，有以下两个原因
-	// 1、阅读 logrus 的源码可以发现，当 Hook 的 Fire 被执行时，entry.logger 处于 Lock 状态，所以在 Hook 内 SetOutput 会引发死锁
+	// 自己实现写入，而不使用 logrus-docs 的 output ，有以下两个原因
+	// 1、阅读 logrus-docs 的源码可以发现，当 Hook 的 Fire 被执行时，entry.logger 处于 Lock 状态，所以在 Hook 内 SetOutput 会引发死锁
 	// 2、就算设置了 output ，也难以处理 f.Close
 	b, _ := writer.EntryFormatter.Format(entry)
 	_, err = f.Write(b)

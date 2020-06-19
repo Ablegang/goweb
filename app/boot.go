@@ -1,27 +1,24 @@
+// 框架入口
+
 package app
 
 import (
-	"goweb/pkg/logs"
-	"io"
-	"os"
-
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
-	"goweb/pkg/logs/loghooks"
+	"goweb/pkg/logs"
+	"io"
 )
 
 var r *gin.Engine
 
 func init() {
-	// 注册日志组件
 	registerLogger()
 
-	// env
 	loadEnv()
 
-	// web 引擎
 	r = gin.New()
+
 	r.Use(gin.Recovery())
 
 	// 自定义 gin logger ，主要为了将日志数据按日输出到自定义的目录内
@@ -36,7 +33,8 @@ func init() {
 
 // 框架启动
 func Start() {
-	err := r.Run(os.Getenv("PORT"))
+	port, _ := Get("app", "port").(string)
+	err := r.Run(port)
 	if err != nil {
 		log.Panicln("启动失败：", err)
 	}
@@ -47,14 +45,18 @@ func registerLogger() {
 	// std 是指针类型，且是包变量，程序运行时就已经注册
 
 	// 设置最小 log 级别
-	log.SetLevel(log.TraceLevel)
+	level, _ := Get("log", "minLevel").(log.Level)
+	log.SetLevel(level)
 
 	// 设置取堆栈信息
-	log.SetReportCaller(true)
+	reportCaller, _ := Get("log", "reportCaller").(bool)
+	log.SetReportCaller(reportCaller)
 
 	// 注册 Hooks...
-	log.AddHook(loghooks.NewEmailNotify())
-	log.AddHook(loghooks.NewFileWriter())
+	hooks, _ := Get("log", "hooks").([]log.Hook)
+	for _, hook := range hooks {
+		log.AddHook(hook)
+	}
 
 	return
 }

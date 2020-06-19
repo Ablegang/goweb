@@ -1,4 +1,4 @@
-package logrus
+package logrus_docs
 
 import (
 	"fmt"

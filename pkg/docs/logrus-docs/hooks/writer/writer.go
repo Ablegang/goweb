@@ -3,7 +3,7 @@ package writer
 import (
 	"io"
 
-	log "goweb/pkg/logs/logrus"
+	log "goweb/pkg/docs/logrus-docs"
 )
 
 // Hook is a hook that writes logs of specified LogLevels to specified Writer

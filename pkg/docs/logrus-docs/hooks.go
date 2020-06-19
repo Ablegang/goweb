@@ -1,4 +1,4 @@
-package logrus
+package logrus_docs
 
 // hook 接口，限定了所有 hook 实例必须实现的方法
 // 所有添加的 hook ，都会在指定的日志级别 logs 发生时执行

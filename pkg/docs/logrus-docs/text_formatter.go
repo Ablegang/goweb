@@ -1,4 +1,4 @@
-package logrus
+package logrus_docs
 
 import (
 	"bytes"
@@ -247,7 +247,7 @@ func (f *TextFormatter) printColored(b *bytes.Buffer, entry *Entry, keys []strin
 	}
 
 	// Remove a single newline if it already exists in the message to keep
-	// the behavior of logrus text_formatter the same as the stdlib logs package
+	// the behavior of logrus-docs text_formatter the same as the stdlib logs package
 	entry.Message = strings.TrimSuffix(entry.Message, "\n")
 
 	caller := ""

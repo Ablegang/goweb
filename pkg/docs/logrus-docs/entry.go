@@ -1,4 +1,4 @@
-package logrus
+package logrus_docs
 
 import (
 	"bytes"
@@ -50,7 +50,7 @@ var ErrorKey = "error"
 // Entry 实例是 Logrus 记录的具体结构，包含所有通过 WithField 注册的字段
 // 会在最终调用 Trace、Debug 之类的方法时记录
 // 使用时，应尽可能将记录内容抽象为 Entry 以实现重用
-// logrus 的设计思想是将日志抽象为对象来管理，Entry 就是对这一层抽象的封装
+// logrus-docs 的设计思想是将日志抽象为对象来管理，Entry 就是对这一层抽象的封装
 type Entry struct {
 	Logger *Logger
 
@@ -185,8 +185,8 @@ func getPackageName(f string) string {
 	return f
 }
 
-// 用于检索第一个 logrus 上游的函数名称
-// 比如在 main 里面调用了 logrus 的函数，则拿到 main
+// 用于检索第一个 logrus-docs 上游的函数名称
+// 比如在 main 里面调用了 logrus-docs 的函数，则拿到 main
 func getCaller() *runtime.Frame {
 	// cache this package's fully-qualified name
 	callerInitOnce.Do(func() {

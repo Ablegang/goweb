@@ -5,7 +5,7 @@ import (
 	"log/syslog"
 	"os"
 
-	"goweb/pkg/logs/logrus"
+	"goweb/pkg/docs/logrus-docs"
 )
 
 // SyslogHook to send logs via syslog.
@@ -23,7 +23,7 @@ func NewSyslogHook(network, raddr string, priority syslog.Priority, tag string) 
 	return &SyslogHook{w, network, raddr}, err
 }
 
-func (hook *SyslogHook) Fire(entry *logrus.Entry) error {
+func (hook *SyslogHook) Fire(entry *logrus_docs.Entry) error {
 	line, err := entry.String()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to read entry, %v", err)
@@ -31,23 +31,23 @@ func (hook *SyslogHook) Fire(entry *logrus.Entry) error {
 	}
 
 	switch entry.Level {
-	case logrus.PanicLevel:
+	case logrus_docs.PanicLevel:
 		return hook.Writer.Crit(line)
-	case logrus.FatalLevel:
+	case logrus_docs.FatalLevel:
 		return hook.Writer.Crit(line)
-	case logrus.ErrorLevel:
+	case logrus_docs.ErrorLevel:
 		return hook.Writer.Err(line)
-	case logrus.WarnLevel:
+	case logrus_docs.WarnLevel:
 		return hook.Writer.Warning(line)
-	case logrus.InfoLevel:
+	case logrus_docs.InfoLevel:
 		return hook.Writer.Info(line)
-	case logrus.DebugLevel, logrus.TraceLevel:
+	case logrus_docs.DebugLevel, logrus_docs.TraceLevel:
 		return hook.Writer.Debug(line)
 	default:
 		return nil
 	}
 }
 
-func (hook *SyslogHook) Levels() []logrus.Level {
-	return logrus.AllLevels
+func (hook *SyslogHook) Levels() []logrus_docs.Level {
+	return logrus_docs.AllLevels
 }

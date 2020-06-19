@@ -1,4 +1,4 @@
-package logrus
+package logrus_docs
 
 import (
 	"fmt"
@@ -41,7 +41,7 @@ func ParseLevel(lvl string) (Level, error) {
 	}
 
 	var l Level
-	return l, fmt.Errorf("not a valid logrus Level: %q", lvl)
+	return l, fmt.Errorf("not a valid logrus-docs Level: %q", lvl)
 }
 
 // 根据字符串转换自己的值，接收者本身的值会发生变化
@@ -75,7 +75,7 @@ func (level Level) MarshalText() ([]byte, error) {
 		return []byte("panic"), nil
 	}
 
-	return nil, fmt.Errorf("not a valid logrus level %d", level)
+	return nil, fmt.Errorf("not a valid logrus-docs level %d", level)
 }
 
 // 日志级别数组

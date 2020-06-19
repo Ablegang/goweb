@@ -1,4 +1,4 @@
-package logrus
+package logrus_docs
 
 import "time"
 
@@ -30,7 +30,7 @@ type Formatter interface {
 // This is to not silently overwrite `time`, `msg`, `func` and `level` fields when
 // dumping it. If this code wasn't there doing:
 //
-//  logrus.WithField("level", 1).Info("hello")
+//  logrus-docs.WithField("level", 1).Info("hello")
 //
 // Would just silently drop the user provided level. Instead with this code
 // it'll logged as:

@@ -11,7 +11,7 @@ import (
     "os"
     "time"
 
-    log "github.com/sirupsen/logrus"
+    log "github.com/sirupsen/logrus-docs"
     "goweb/pkg/logs/loghooks"
 )
 
