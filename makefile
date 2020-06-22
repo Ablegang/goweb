@@ -1,7 +1,7 @@
 # 默认值
 MSG := empty msg
 ORIGIN := origin
-BRANCH := branch
+BRANCH := master
 
 ifdef m
 	MSG = $(m)
