@@ -1,5 +1,5 @@
 # 默认值
-MSG := emptymsg
+MSG := empty msg
 ORIGIN := origin
 BRANCH := branch
 
