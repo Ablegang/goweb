@@ -1,7 +1,12 @@
 package app
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"goweb/app/handlers/home"
+)
 
 func registerRoute(r *gin.Engine) {
-	r.Any("/")
+	r.Any("/",home.Index)
+
+	r.
 }
