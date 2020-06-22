@@ -7,15 +7,18 @@ import (
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 	"goweb/pkg/logs"
+	"goweb/pkg/logs/loghooks"
 	"io"
+	"os"
 )
 
 var r *gin.Engine
 
 func init() {
-	registerLogger()
-
+	// 环境变量必须最早载入
 	loadEnv()
+
+	registerLogger()
 
 	r = gin.New()
 
@@ -33,7 +36,7 @@ func init() {
 
 // 框架启动
 func Start() {
-	port, _ := Get("app", "port").(string)
+	port := os.Getenv("PORT")
 	err := r.Run(port)
 	if err != nil {
 		log.Panicln("启动失败：", err)
@@ -45,18 +48,14 @@ func registerLogger() {
 	// std 是指针类型，且是包变量，程序运行时就已经注册
 
 	// 设置最小 log 级别
-	level, _ := Get("log", "minLevel").(log.Level)
-	log.SetLevel(level)
+	log.SetLevel(log.TraceLevel)
 
 	// 设置取堆栈信息
-	reportCaller, _ := Get("log", "reportCaller").(bool)
-	log.SetReportCaller(reportCaller)
+	log.SetReportCaller(true)
 
 	// 注册 Hooks...
-	hooks, _ := Get("log", "hooks").([]log.Hook)
-	for _, hook := range hooks {
-		log.AddHook(hook)
-	}
+	log.AddHook(loghooks.NewEmailNotify())
+	log.AddHook(loghooks.NewFileWriter())
 
 	return
 }
