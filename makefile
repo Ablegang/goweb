@@ -5,15 +5,15 @@ ORIGIN := origin
 BRANCH := branch
 
 ifdef m
-	MSG = m
+	MSG = $(m)
 endif
 
 ifdef o
-	ORIGIN = o
+	ORIGIN = $(o)
 endif
 
 ifdef b
-	BRANCH = b
+	BRANCH = $(b)
 
 endif
 
