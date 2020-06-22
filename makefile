@@ -1,4 +1,3 @@
-
 # 默认值
 MSG := emptymsg
 ORIGIN := origin
