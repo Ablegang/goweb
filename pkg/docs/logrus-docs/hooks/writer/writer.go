@@ -1,3 +1,6 @@
+// 给 logrus 注册 Hook 时，可以直接自己定义 Hook，自己实现 Hook 的 Fire 和 Levels 方法
+// 也可以实例化 writer.Hook，并给 writer.Hook 配置 Writer 的形式来指定 Hook 实例
+
 package writer
 
 import (

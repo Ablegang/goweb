@@ -1,3 +1,6 @@
+// logrus 的 io.Writer 实例
+// 比如要在 gin 中接入 logrus ，可以直接将 logger.Writer 返回的实例传递给 gin
+
 package logrus_docs
 
 import (
