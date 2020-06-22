@@ -13,7 +13,6 @@ endif
 
 ifdef b
 	BRANCH = $(b)
-
 endif
 
 git:
