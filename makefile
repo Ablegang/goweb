@@ -21,4 +21,5 @@ git:
 
 	git add .
 	git commit -m "$(MSG)"
+	git pull $(ORIGIN) $(BRANCH)
 	git push $(ORIGIN) $(BRANCH)
