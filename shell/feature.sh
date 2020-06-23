@@ -17,4 +17,9 @@ from=$f
 if [ "$from" = "" ]; then
   echo "$prefix 当前未指定基础分支，默认从 master 切出新分支"
   from="master"
+else
+  if [[ $(git branch | grep "$from") = "" ]]; then
+      echo "$prefix 没有 $from 分支"
+      exit
+  fi
 fi
