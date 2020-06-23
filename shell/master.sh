@@ -4,11 +4,12 @@ if [ $(git branch | grep \* | grep -Eo ' .+') != "master" ]; then
   exit
 fi
 
-if [ $m = "" ]; then m='default msg'; fi
+msg=$m
+if [ $msg = "" ]; then msg='default msg'; fi
 
 echo "===============>start"
 git add .
-git commit -m "$m"
+git commit -m "$msg"
 git pull origin master
 git push origin master
 echo "===============>finish"
