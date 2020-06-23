@@ -5,7 +5,10 @@ if [ $(git branch | grep \* | grep -Eo ' .+') != "master" ]; then
 fi
 
 msg=$m
-if [ $msg = "" ]; then msg='default msg'; fi
+
+if [ "$msg" = "" ]; then
+  msg='default msg'
+fi
 
 echo "===============>start"
 git add .
