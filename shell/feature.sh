@@ -27,3 +27,5 @@ echo "$prefix 即将从 $from 检出 feature/$b 分支"
 git checkout $from > /dev/null
 git checkout -b feature/$b > /dev/null
 git status
+
+echo "$prefix finish"
