@@ -5,7 +5,7 @@ if [ "$b" = "" ]; then
   exit
 fi
 
-if [ "$(git status | grep 'nothing to commit, working tree clean')" = "" ]; then
+if [[ $(git status | grep 'nothing to commit, working tree clean') = "" ]]; then
   echo "$prefix 当前分支有修改暂未提交，请先处理"
   exit
 fi
