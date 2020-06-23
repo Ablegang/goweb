@@ -4,9 +4,7 @@ if [ $(git branch | grep \* | grep -Eo ' .+') != "master" ]; then
   exit
 fi
 
-if [ $m = ""]; then
-  m="default"
-fi
+if [ $m = "" ]; then m="default"; fi
 
 echo "===============>start"
 git add .
