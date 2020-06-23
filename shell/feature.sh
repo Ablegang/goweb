@@ -10,8 +10,6 @@ if [[ $(git status | grep 'nothing to commit, working tree clean') = "" ]]; then
   exit
 fi
 
-echo "$prefix 即将创建 feature/$b 分支"
-
 from=$f
 
 if [ "$from" = "" ]; then
@@ -23,3 +21,9 @@ else
       exit
   fi
 fi
+
+echo "$prefix 即将从 $from 检出 feature/$b 分支"
+
+git checkout $from > /dev/null
+git checkout -b feature/$b > /dev/null
+git status
