@@ -4,7 +4,9 @@ if [ $(git branch | grep \* | grep -Eo ' .+') != "master" ]; then
   exit
 fi
 
+echo "===============>start"
 git add .
 git commit -m "$m"
 git pull origin master
 git push origin master
+echo "===============>finish"
