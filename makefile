@@ -2,6 +2,7 @@ master/%:
 # 需要指定当前系统的 sh
 # make master/message
 	@sh shell/master.sh m=$*
+	@echo $*
 
 master:
 	@make master/
