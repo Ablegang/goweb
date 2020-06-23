@@ -1,7 +1,7 @@
 # make master/message
 master/%:
 # 需要指定当前系统的 sh
-	@m=$* && sh shell/master.sh
+	@m=$* sh shell/master.sh
 
 # make master
 master:
