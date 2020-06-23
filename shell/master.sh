@@ -4,6 +4,10 @@ if [ $(git branch | grep \* | grep -Eo ' .+') != "master" ]; then
   exit
 fi
 
+if [ $m = ""]; then
+  m="default"
+fi
+
 echo "===============>start"
 git add .
 git commit -m "$m"
