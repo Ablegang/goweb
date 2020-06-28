@@ -16,3 +16,7 @@ feature/%:
 # 打包 push 当前分支
 push/%:
 	@m=$* sh shell/push.sh
+
+# make rebase master
+rebase/%:
+	@b=$* sh shell/rebase.sh
