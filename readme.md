@@ -46,3 +46,6 @@ yaml 支持热更新，只要修改 .version 的版本号即可
 env 不支持热更新
 
 > 关于 mysql 配置、redis 配置等变量，也完全可以写在 yaml 配置中，以此支持热更新，只要在 .gitignore 里管理好即可保证安全
+
+# makefile
+可参考 makefile 和 ./shell  下的文件
