@@ -11,3 +11,8 @@ master:
 # b 指新建的分支名 f 指基本分支，默认为 master，则从 master 切出新分支
 feature/%:
 	@b=$* sh shell/feature.sh
+
+# make push/message
+# 打包 push 当前分支
+push/%:
+	@m=$* sh shell/push.sh

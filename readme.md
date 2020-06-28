@@ -47,5 +47,13 @@ env 不支持热更新
 
 > 关于 mysql 配置、redis 配置等变量，也完全可以写在 yaml 配置中，以此支持热更新，只要在 .gitignore 里管理好即可保证安全
 
+# 用文件记录 gin 请求日志
+> app/boot.go 的 init 函数
+```go
+
+    // 自定义 gin logger ，主要为了将日志数据按日输出到自定义的目录内
+	writer := io.MultiWriter(gin.DefaultWriter, logs.NewRequestWriter()) // 可以看 logs/request_writer.go
+	r.Use(gin.LoggerWithWriter(writer))
+```
 # makefile
 可参考 makefile 和 ./shell  下的文件
