@@ -17,3 +17,5 @@ git checkout $b
 git pull --rebase
 git checkout $NOWB
 git rebase $b
+
+echo "$prefix rebase finish"
