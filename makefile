@@ -31,4 +31,4 @@ shutdown:
 
 # make build
 build:
-	@go build
+	@/usr/bin/go build
