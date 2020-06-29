@@ -23,4 +23,4 @@ rebase/%:
 
 # make quotes
 quotes:
-	go run pkg/tools/quotes.go
+	@go run pkg/tools/quotes.go

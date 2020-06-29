@@ -10,7 +10,8 @@ import (
 
 func main() {
 	u := make(map[string]map[string]interface{})
-	url := "http://api.money.126.net/data/feed/0600345,0000001,0000300,0600036"
+	// 沪以 0 开头，深以 1 开头
+	url := "http://api.money.126.net/data/feed/0600345,0000001,0000300,0600036,1002776"
 	resp, _ := http.Get(url)
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body[21:len(body)-2], &u)
