@@ -28,7 +28,3 @@ quotes:
 # make shutdown
 shutdown:
 	@sh shell/shutdown.sh
-
-# make build
-build:
-	@/usr/bin/go build

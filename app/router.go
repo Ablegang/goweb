@@ -7,4 +7,5 @@ import (
 
 func registerRoute(r *gin.Engine) {
 	r.Any("/",home.Index)
+	r.Any("/test",home.Index)
 }
