@@ -24,3 +24,11 @@ rebase/%:
 # make quotes
 quotes:
 	@go run pkg/tools/quotes.go
+
+# make shutdown
+shutdown:
+	@sh shell/shutdown.sh
+
+# make build
+build:
+	@go build
