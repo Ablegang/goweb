@@ -20,3 +20,7 @@ push/%:
 # make rebase master
 rebase/%:
 	@b=$* sh shell/rebase.sh
+
+# make quotes
+quotes:
+	go run pkg/tools/quotes.go

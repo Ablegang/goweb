@@ -56,4 +56,10 @@ env 不支持热更新
 	r.Use(gin.LoggerWithWriter(writer))
 ```
 # makefile
-可参考 makefile 和 ./shell  下的文件
+可参考 makefile 和 ./shell 下的文件
+
+# 文章系统设计
+- 所有文章都使用 markdown 编写，md 文件存储，github 托管
+- push 时触发 web Hook ，自动部署 md 文件
+- 项目由 walle 管理
+- 规划文章结构，目录为分类，md 文件为文章，创建时间和更新时间直接用 fileinfo
