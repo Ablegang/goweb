@@ -1,3 +1,5 @@
 /.idea
 /storage
 /prod.yaml
+/.env
+/dev.yaml
