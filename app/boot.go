@@ -37,7 +37,13 @@ func init() {
 // 框架启动
 func Start() {
 	port := os.Getenv("PORT")
-	err := r.Run(port)
+	server := &http.Server{Addr: port, Handler: r}
+	l, err := net.Listen("tcp4", addr)
+	if err != nil {
+    		log.Fatal(err)
+	}
+	err = server.Serve(l)
+	// err := r.Run(port)
 	if err != nil {
 		log.Panicln("启动失败：", err)
 	}
