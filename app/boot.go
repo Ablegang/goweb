@@ -10,6 +10,9 @@ import (
 	"goweb/pkg/logs/loghooks"
 	"io"
 	"os"
+	
+	"net/http"
+	"net"	
 )
 
 var r *gin.Engine
@@ -37,8 +40,8 @@ func init() {
 // 框架启动
 func Start() {
 	port := os.Getenv("PORT")
-	server := &http.Server{Addr: port, Handler: r}
-	l, err := net.Listen("tcp4", addr)
+	server := &http.Server{Handler: r}
+	l, err := net.Listen("tcp4", port)
 	if err != nil {
     		log.Fatal(err)
 	}
