@@ -1,4 +1,4 @@
-# make master/message
+# make master/message 可以用 . 代替空格
 master/%:
 # 需要指定当前系统的 sh
 	@m=$* sh shell/master.sh
