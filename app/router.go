@@ -5,5 +5,7 @@ import (
 )
 
 func registerRoute(r *gin.Engine) {
-	r.G
+	r.GET("/", func(c *gin.Context) {
+		c.String(200,"It works!")
+	})
 }
