@@ -2,6 +2,8 @@ package logs
 
 import (
 	"errors"
+	"github.com/sirupsen/logrus"
+	"goweb/pkg/dingrobot"
 	"io"
 	"os"
 	"time"
@@ -27,6 +29,9 @@ type CustomFileWriter struct {
 	// 默认权限，默认是 0777
 	// 这个一定要设置合理，否则无法写入
 	Perm os.FileMode
+
+	// 是否启用钉钉推送
+	IsDingRobot bool
 }
 
 // 检验是否实现
@@ -38,6 +43,7 @@ func NewCustomFileWriter() *CustomFileWriter {
 		"storage/logs/ginStd/",
 		"2006-01-02.txt",
 		os.FileMode(0777),
+		false,
 	}
 }
 
@@ -62,6 +68,17 @@ func (writer *CustomFileWriter) Write(p []byte) (n int, err error) {
 	n, err = f.Write(p)
 	if err != nil {
 		return 0, err
+	}
+
+	// robot
+	if writer.IsDingRobot {
+		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
+		md := "# PROD Recover 告警：\n" + "```text\n" + string(p) + "\n```"
+		msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("PROD 接口告警", md).Build()
+		err = robot.SendMessage(msg)
+		if err != nil {
+			logrus.Println(err)
+		}
 	}
 
 	return n, nil

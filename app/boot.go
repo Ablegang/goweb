@@ -47,6 +47,7 @@ func registerLogger() {
 	// 注册 Hooks...
 	log.AddHook(loghooks.NewEmailNotify())
 	log.AddHook(loghooks.NewFileWriter())
+	log.AddHook(loghooks.NewDingNotify(os.Getenv("LOG_DING_ACCESS_TOKEN")))
 }
 
 // 载入 .env
@@ -71,6 +72,7 @@ func router() *gin.Engine {
 		Dir:              "storage/" + os.Getenv("RECOVER_LOG_DIR"),
 		FileNameFormater: os.Getenv("RECOVER_LOG_FILEFORMATER"),
 		Perm:             os.FileMode(0777),
+		IsDingRobot:      true,
 	})
 	r.Use(resp.RecoveryWithWriter(recoverWriter))
 
@@ -80,6 +82,7 @@ func router() *gin.Engine {
 		Dir:              "storage/" + os.Getenv("GIN_STD_LOG_DIR"),
 		FileNameFormater: os.Getenv("GIN_STD_LOG_FILEFORMATER"),
 		Perm:             os.FileMode(0777),
+		IsDingRobot:      false,
 	})
 	r.Use(gin.LoggerWithWriter(logWriter))
 
@@ -89,6 +92,7 @@ func router() *gin.Engine {
 		Dir:              "storage/" + os.Getenv("REQUEST_LOG_DIR"),
 		FileNameFormater: os.Getenv("REQUEST_LOG_FILEFORMATER"),
 		Perm:             os.FileMode(0777),
+		IsDingRobot:      false,
 	}))
 
 	return r
