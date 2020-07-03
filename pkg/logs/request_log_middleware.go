@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"goweb/pkg/response"
 	"io/ioutil"
-	"os"
 	"time"
 )
 
@@ -17,7 +16,7 @@ import (
 var _ = response.Rely
 
 // 记录请求及响应日志
-func RequestAndResponseLog() gin.HandlerFunc {
+func RequestAndResponseLog(writer *CustomFileWriter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 		c.Next()
@@ -53,12 +52,6 @@ func RequestAndResponseLog() gin.HandlerFunc {
 
 		t, _ := json.Marshal(logJson)
 
-		writer := &CustomFileWriter{
-			LogMode:          "daily",
-			Dir:              "storage/logs/requests/",
-			FileNameFormater: "2006-01-02.txt",
-			Perm:             os.FileMode(0777),
-		}
 		_, _ = writer.Write(t)
 		_, _ = writer.Write([]byte("\n"))
 	}

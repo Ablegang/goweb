@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"goweb/pkg/response"
+	resp "goweb/pkg/response"
 	"time"
 )
 
@@ -12,6 +12,6 @@ func registerRoute(r *gin.Engine) {
 	r.Use(Cors())
 
 	r.GET("/", func(c *gin.Context) {
-		response.String(c, 200, time.Now().Format("2006/01/01 - 15:04:05"))
+		resp.String(c, 200, time.Now().Format("2006/01/02 - 15:04:05"))
 	})
 }

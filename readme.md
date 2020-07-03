@@ -70,3 +70,13 @@ env 不支持热更新
     - ginStd 是 gin 默认写出的请求日志
     - ginErr 是 gin 遭遇 panic 的日志
     - requests 是详细的请求及响应日志
+
+# response
+
+所有 response 相关的操作都封装在该包内，如果要改默认的返回格式，可以改 SuccessJson 或 FailJson 函数
+
+另外，response 包重写了 gin 的 Recovery 中间件，实现记录到文件，同时所有的错误都统一抛出 404 ，而不是 500
+
+# 增加 RequestId 中间件
+基于雪花算法
+gin.Context.Get("RequestId") 即可在其他 Handlers 中获取
