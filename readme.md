@@ -80,3 +80,7 @@ env 不支持热更新
 # 增加 RequestId 中间件
 基于雪花算法
 gin.Context.Get("RequestId") 即可在其他 Handlers 中获取
+
+# 钉钉群机器人告警
+- 在 logrus 注册了 hook，详情查看 pkg/logs/loghooks/ding_notify.go
+- 为 gin 的 recover 上了钉钉群告警
