@@ -8,30 +8,24 @@ import (
 	log "github.com/sirupsen/logrus"
 	"goweb/pkg/logs"
 	"goweb/pkg/logs/loghooks"
+	"goweb/pkg/response"
 	"io"
 	"os"
 )
 
+// gin 路由器实例
 var r *gin.Engine
 
+// 初始化框架
 func init() {
-	// 环境变量必须最早载入
+	// 环境变量
 	loadEnv()
-
+	// 注册日志组件
 	registerLogger()
-
-	r = gin.New()
-
-	r.Use(gin.Recovery())
-
-	// 自定义 gin logger ，主要为了将日志数据按日输出到自定义的目录内
-	writer := io.MultiWriter(gin.DefaultWriter, logs.NewRequestWriter())
-	r.Use(gin.LoggerWithWriter(writer))
-
+	// 实例化路由器
+	r = router()
 	// 注册路由
 	registerRoute(r)
-
-	return
 }
 
 // 框架启动
@@ -43,27 +37,46 @@ func Start() {
 	}
 }
 
+// 注册日志组件
 func registerLogger() {
-	// 直接使用 log 包的函数，包内部会实例化一个 std 作为通用 logger
-	// std 是指针类型，且是包变量，程序运行时就已经注册
-
 	// 设置最小 log 级别
 	log.SetLevel(log.TraceLevel)
-
 	// 设置取堆栈信息
 	log.SetReportCaller(true)
 
 	// 注册 Hooks...
 	log.AddHook(loghooks.NewEmailNotify())
 	log.AddHook(loghooks.NewFileWriter())
-
-	return
 }
 
+// 载入 .env
 func loadEnv() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Panicln("env load failed：", err)
 	}
-	return
+}
+
+// 实例化 gin 路由器
+func router() *gin.Engine {
+	// 实例化路由器
+	r = gin.New()
+
+	// recovery 相关处理：记录 panic 日志到 file
+	recoverWriter := io.MultiWriter(gin.DefaultErrorWriter, &logs.CustomFileWriter{
+		LogMode:          "daily",
+		Dir:              "storage/logs/ginErr/",
+		FileNameFormater: "2006-01-02.txt",
+		Perm:             os.FileMode(0777),
+	})
+	r.Use(response.RecoveryWithWriter(recoverWriter))
+
+	// logger 相关处理：记录默认的 gin 请求日志到 file
+	logWriter := io.MultiWriter(gin.DefaultWriter, logs.NewCustomFileWriter())
+	r.Use(gin.LoggerWithWriter(logWriter))
+
+	// requests 和 responses 记录到 file
+	r.Use(logs.RequestAndResponseLog())
+
+	return r
 }

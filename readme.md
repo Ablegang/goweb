@@ -52,7 +52,7 @@ env 不支持热更新
 ```go
 
     // 自定义 gin logger ，主要为了将日志数据按日输出到自定义的目录内
-	writer := io.MultiWriter(gin.DefaultWriter, logs.NewRequestWriter()) // 可以看 logs/request_writer.go
+	writer := io.MultiWriter(gin.DefaultWriter, logs.NewCustomFileWriter()) // 可以看 logs/custom_file_writer.go
 	r.Use(gin.LoggerWithWriter(writer))
 ```
 # makefile
@@ -61,5 +61,12 @@ env 不支持热更新
 # 文章系统设计
 - 所有文章都使用 markdown 编写，md 文件存储，github 托管
 - push 时触发 web Hook ，自动部署 md 文件
-- 项目由 walle 管理
+- 项目由 spug 管理
 - 规划文章结构，目录为分类，md 文件为文章，创建时间和更新时间直接用 fileinfo
+
+# storage
+## logs
+    - custom 是开发者在程序中埋点打出的日志
+    - ginStd 是 gin 默认写出的请求日志
+    - ginErr 是 gin 遭遇 panic 的日志
+    - requests 是详细的请求及响应日志

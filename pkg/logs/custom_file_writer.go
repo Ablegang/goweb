@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type RequestWriter struct {
+type CustomFileWriter struct {
 	// 日志模式
 	// daily 指文件按日切分，默认
 	// single 指日志存放在单一文件内
@@ -30,19 +30,19 @@ type RequestWriter struct {
 }
 
 // 检验是否实现
-var _ io.Writer = &RequestWriter{}
+var _ io.Writer = &CustomFileWriter{}
 
-func NewRequestWriter() *RequestWriter {
-	return &RequestWriter{
+func NewCustomFileWriter() *CustomFileWriter {
+	return &CustomFileWriter{
 		"daily",
-		"storage/logs/gin/",
+		"storage/logs/ginStd/",
 		"2006-01-02.txt",
 		os.FileMode(0777),
 	}
 }
 
 // 日志切割
-func (writer *RequestWriter) Write(p []byte) (n int, err error) {
+func (writer *CustomFileWriter) Write(p []byte) (n int, err error) {
 
 	// 建立目录
 	_ = os.MkdirAll(writer.Dir, writer.Perm)
@@ -68,7 +68,7 @@ func (writer *RequestWriter) Write(p []byte) (n int, err error) {
 }
 
 // 打开文件
-func (writer *RequestWriter) open() (*os.File, error) {
+func (writer *CustomFileWriter) open() (*os.File, error) {
 
 	// 根据日志模式取日志文件名
 	fileName := ""
