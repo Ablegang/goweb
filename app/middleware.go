@@ -23,7 +23,7 @@ func Cors() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Credentials", credentials)
 		c.Header("Author", author)
 		c.Header("PowerBy", powerBy)
-		c.Header("PowerBy", powerBy2)
+		c.Header("PowerBy2", powerBy2)
 		c.Next()
 	}
 }
