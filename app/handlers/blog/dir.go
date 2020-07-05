@@ -1,5 +1,0 @@
-package blog
-
-func cates() {
-
-}

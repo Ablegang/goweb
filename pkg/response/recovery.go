@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"goweb/pkg/hot"
 	"io"
 	"io/ioutil"
 	"log"
@@ -136,6 +137,6 @@ func function(pc uintptr) []byte {
 }
 
 func timeFormat(t time.Time) string {
-	var timeString = t.Format("2006/01/02 - 15:04:05")
+	var timeString = t.Format(hot.GetTimeCommonFormat())
 	return timeString
 }

@@ -45,7 +45,7 @@ func loadYaml() {
 }
 
 // 取配置项
-func Get(name string) interface{} {
+func GetConfig(name string) interface{} {
 	// 检查更新
 	fresh()
 
@@ -78,4 +78,14 @@ func getLastVersion() string {
 	}
 
 	return data["CONFIG_VERSION"]
+}
+
+// 日期格式
+func GetTimeCommonFormat() string {
+	f, _ := GetConfig("common.timeFormat").(string)
+	if f == "" {
+		return "2006/01/02 - 15:04:05"
+	}
+
+	return f
 }

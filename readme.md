@@ -60,8 +60,7 @@ env 不支持热更新
 
 # 文章系统设计
 - 所有文章都使用 markdown 编写，md 文件存储，github 托管
-- push 时触发 web Hook ，自动部署 md 文件
-- 项目由 spug 管理
+- 文章内容单独放一个项目存储，由 spug 发布
 - 规划文章结构，目录为分类，md 文件为文章，创建时间和更新时间直接用 fileinfo
 
 # storage
@@ -77,6 +76,8 @@ env 不支持热更新
 
 另外，response 包重写了 gin 的 Recovery 中间件，实现记录到文件，同时所有的错误都统一抛出 404 ，而不是 500
 
+使用 response.FailJson 时，一定要判断，相关报错信息是否需要返回给前端，如果不需要，则 msg 直接使用默认的 fail 即可
+
 # 增加 RequestId 中间件
 基于雪花算法
 gin.Context.Get("RequestId") 即可在其他 Handlers 中获取
@@ -84,3 +85,8 @@ gin.Context.Get("RequestId") 即可在其他 Handlers 中获取
 # 钉钉群机器人告警
 - 在 logrus 注册了 hook，详情查看 pkg/logs/loghooks/ding_notify.go
 - 为 gin 的 recover 上了钉钉群告警
+
+# 框架规划
+所有业务逻辑写在 app/Handlers 下
+所有组件类功能，写在 pkg 下，如与业务无关，可以直接复制到其他项目中使用的，就可以定义为组件
+后期如果接口多了，业务复杂了，则一个接口一个文件，相关表单校验、业务处理等所有内容，都写在这个文件里

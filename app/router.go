@@ -2,6 +2,8 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"goweb/app/handlers/blog"
+	"goweb/pkg/hot"
 	resp "goweb/pkg/response"
 	"time"
 )
@@ -13,6 +15,19 @@ func registerRoute(r *gin.Engine) {
 
 	// 根目录
 	r.GET("/", func(c *gin.Context) {
-		resp.String(c, 200, time.Now().Format("2006/01/02 - 15:04:05"))
+		resp.String(c, 200, time.Now().Format(hot.GetTimeCommonFormat()))
 	})
+
+	// blog
+	blogRouter(r.Group("blog"))
+}
+
+// 博客路由
+func blogRouter(r *gin.RouterGroup) {
+	// 分类列表
+	r.GET("ls", blog.Ls)
+	// 文章列表
+	r.GET("posts", blog.Posts)
+	// 文章内容
+	r.GET("posts.detail", blog.PostsDetail)
 }

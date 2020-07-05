@@ -8,10 +8,19 @@ package response
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"goweb/pkg/helper"
+	"goweb/pkg/hot"
 	"time"
 )
 
 var Rely = 1
+
+const (
+	DefaultFailCode    = -1
+	DefaultSuccessCode = 0
+	DefaultFailMsg     = "failed"
+	DefaultSuccessMsg  = "ok"
+)
 
 // 响应 Json
 func JSON(c *gin.Context, code int, g gin.H) {
@@ -36,31 +45,31 @@ func String(c *gin.Context, code int, format string, values ...interface{}) {
 // 成功响应 Json
 func SuccessJson(c *gin.Context, g gin.H) {
 	JSON(c, 200, gin.H{
-		"code":         0,
-		"msg":          "ok",
-		"api":          c.Request.Host + c.Request.URL.Path + c.Request.URL.RawQuery,
-		"responseTime": time.Now().Format("2006-01-02 13:12:14"),
+		"code":         DefaultSuccessCode,
+		"msg":          DefaultSuccessMsg,
+		"api":          c.Request.Host + c.Request.URL.Path + "?" + c.Request.URL.RawQuery,
+		"responseTime": time.Now().Format(hot.GetTimeCommonFormat()),
 		"data":         g,
 	})
 }
 
 // 失败响应 Json
 func FailJson(c *gin.Context, g gin.H, values ...interface{}) {
-	code := -1
-	if values[0] != nil {
+	code := DefaultFailCode
+	if helper.IssetArrayIndex(values, 0) {
 		code, _ = values[0].(int)
 	}
 
-	msg := "fail"
-	if values[1] != nil {
+	msg := DefaultFailMsg
+	if helper.IssetArrayIndex(values, 1) {
 		msg, _ = values[1].(string)
 	}
 
 	JSON(c, 400, gin.H{
 		"code":         code,
 		"msg":          msg,
-		"api":          c.Request.Host + c.Request.URL.Path + c.Request.URL.RawQuery,
-		"responseTime": time.Now().Format("2006-01-02 13:12:14"),
+		"api":          c.Request.Host + c.Request.URL.Path + "?" + c.Request.URL.RawQuery,
+		"responseTime": time.Now().Format(hot.GetTimeCommonFormat()),
 		"data":         g,
 	})
 }
