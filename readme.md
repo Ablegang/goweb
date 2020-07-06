@@ -58,7 +58,7 @@ env 不支持热更新
 # makefile
 可参考 makefile 和 ./shell 下的文件
 
-# 文章系统设计
+# BLOG 设计
 - 所有文章都使用 markdown 编写，md 文件存储，github 托管
 - 文章内容单独放一个项目存储，由 spug 发布
 - 规划文章结构，目录为分类，md 文件为文章，更新时间用 fileinfo
