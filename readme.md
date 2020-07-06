@@ -61,8 +61,36 @@ env 不支持热更新
 # 文章系统设计
 - 所有文章都使用 markdown 编写，md 文件存储，github 托管
 - 文章内容单独放一个项目存储，由 spug 发布
-- 规划文章结构，目录为分类，md 文件为文章，创建时间和更新时间直接用 fileinfo
-
+- 规划文章结构，目录为分类，md 文件为文章，更新时间用 fileinfo
+- 发布配置：
+    - 排除文件：.git
+    - 自定义全局变量：
+        ```
+        STORAGEPATH=/www/wwwroot/storage/goweb
+        ENVPATH=/www/wwwroot/env/goweb
+        BLOGPATH=/www/wwwroot/blog
+        ```
+    - 发布前钩子：
+        ```
+        cd ${ENVPATH} && git pull origin master
+        cd ${BLOGPATH} && git pull origin master
+        ```
+    - 发布后钩子：
+        ```
+          ln -s  ${STORAGEPATH} storage|| echo ""
+          ln -s ${ENVPATH}/.env .env || echo ""
+          ln -s ${ENVPATH}/prod.yaml prod.yaml || echo ""
+          ln -s ${BLOGPATH} .markdown || echo ""
+          go build
+          
+          # 停服
+          PID=$(ps -e|grep 'goweb' |grep -v grep|awk '{printf $1}')
+          echo $PID
+          kill -9 $PID || echo ""
+          
+          nohup ./goweb &> start.log &
+        ```
+      
 # storage
 ## logs
     - custom 是开发者在程序中埋点打出的日志
