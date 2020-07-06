@@ -94,11 +94,12 @@ env 不支持热更新
       
 # storage
 ## logs
-    - custom 是开发者在程序中埋点打出的日志
-    - ginStd 是 gin 默认写出的请求日志
-    - ginErr 是 gin 遭遇 panic 的日志
-    - requests 是详细的请求及响应日志
-
+```
+    custom 是开发者在程序中埋点打出的日志
+    ginStd 是 gin 默认写出的请求日志
+    ginErr 是 gin 遭遇 panic 的日志
+    requests 是详细的请求及响应日志
+```
 # response
 
 所有 response 相关的操作都封装在该包内，如果要改默认的返回格式，可以改 SuccessJson 或 FailJson 函数
