@@ -72,6 +72,7 @@ env 不支持热更新
         ```
     - 发布前钩子：
         ```
+        # 注意这里的 env 和 blog 会作为单独 git 项目来管理，所以在发布之前，请先建立好这两个项目
         cd ${ENVPATH} && git pull origin master
         cd ${BLOGPATH} && git pull origin master
         ```
