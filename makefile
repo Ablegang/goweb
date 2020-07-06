@@ -17,14 +17,14 @@ feature/%:
 push/%:
 	@m=$* sh shell/push.sh
 
-# make rebase master
+# make rebase/master
 rebase/%:
 	@b=$* sh shell/rebase.sh
 
 # make quotes
 quotes:
-	@go run pkg/tools/quotes.go
+	@go run pkg/commands/quotes.go
 
-# make shutdown
-shutdown:
-	@sh shell/shutdown.sh
+# make blog
+blog:
+	@sh shell/blog_master.sh

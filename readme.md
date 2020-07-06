@@ -57,6 +57,7 @@ env 不支持热更新
 ```
 # makefile
 可参考 makefile 和 ./shell 下的文件
+关于 git 的操作，应提前建好 git 项目，且不能为初始的 git 项目，必须有提交记录（远程仓库也一样）
 
 # BLOG 设计
 - 所有文章都使用 markdown 编写，md 文件存储，github 托管
