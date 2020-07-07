@@ -3,6 +3,7 @@ package loghooks
 import (
 	"github.com/sirupsen/logrus"
 	"goweb/pkg/dingrobot"
+	"os"
 	"time"
 )
 
@@ -48,7 +49,16 @@ func (e *dingNotify) Fire(entry *logrus.Entry) error {
 	msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("PROD 接口告警", md).Build()
 	err = robot.SendMessage(msg)
 	if err != nil {
-		logrus.Println("钉钉群机器人推送失败", err)
+		// 在这里不能使用 logrus 的 std 实例，否则会死锁
+		log := &logrus.Logger{
+			Out:          os.Stderr,
+			Formatter:    new(logrus.TextFormatter),
+			Hooks:        make(logrus.LevelHooks),
+			Level:        logrus.InfoLevel,
+			ExitFunc:     os.Exit,
+			ReportCaller: false,
+		}
+		log.Println("钉钉群机器人告警失败", err)
 	}
 
 	return nil

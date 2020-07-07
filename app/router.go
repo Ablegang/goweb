@@ -30,4 +30,6 @@ func blogRouter(r *gin.RouterGroup) {
 	r.GET("posts", blog.Posts)
 	// 文章内容
 	r.GET("posts.detail", blog.PostsDetail)
+	// CI
+	r.POST("ci",blog.CI)
 }

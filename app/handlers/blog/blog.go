@@ -3,11 +3,14 @@ package blog
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/go-playground/webhooks.v5/github"
+	"goweb/pkg/dingrobot"
 	"goweb/pkg/helper"
 	"goweb/pkg/hot"
 	resp "goweb/pkg/response"
 	"io/ioutil"
 	"os"
+	"os/exec"
 )
 
 // 分类列表
@@ -97,6 +100,47 @@ func PostsDetail(c *gin.Context) {
 		"content": string(content),
 		"ut":      file.ModTime().Format(hot.GetTimeCommonFormat()),
 	})
+	return
+}
+
+// CI
+func CI(c *gin.Context) {
+	// hook 校验
+	hook, _ := github.New(github.Options.Secret(os.Getenv("GITHUB_WEBHOOK_BLOG_SECRET")))
+	payload, err := hook.Parse(c.Request, github.PushEvent)
+	if err != nil {
+		logrus.Errorln("BLOG CI 失败", err)
+		c.String(404, "404 not found")
+		return
+	}
+
+	// payload 解析
+	data, ok := payload.(github.PushPayload)
+	if !ok {
+		logrus.Errorln("BLOG CI 失败", err)
+		c.String(404, "404 not found")
+		return
+	}
+
+	// 执行部署
+	rootDir, _ := helper.GetBlogRoot()
+	shell := "cd " + "./" + rootDir
+	shell += "&& git pull origin master"
+	cmd := exec.Command("/bin/sh", "-c", shell)
+	_, _ = cmd.Output()
+
+	// 通知
+	robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
+	md := "# BLOG 发布了新的内容 \n"
+	md += "- 更新内容：" + data.HeadCommit.Message + "\n"
+	md += "- 作者：" + data.HeadCommit.Committer.Name + "\n"
+	md += "- Email：" + data.HeadCommit.Committer.Email + "\n"
+	md += "- 社区名：" + data.HeadCommit.Committer.Username + "\n"
+	msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
+	err = robot.SendMessage(msg)
+	if err != nil {
+		logrus.Errorln("钉钉行情推送失败", err)
+	}
 	return
 }
 
