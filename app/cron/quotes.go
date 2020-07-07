@@ -144,7 +144,7 @@ func GetQuotes() map[string]map[string]interface{} {
 	u := make(map[string]map[string]interface{})
 	now := time.Now()
 	morning := (now.Hour() >= 9 && now.Minute() >= 15) && (now.Hour() <= 11 && now.Minute() <= 30)
-	afternoon := now.Hour() >= 13 && now.Hour() <= 15
+	afternoon := now.Hour() >= 13 && now.Hour() <= 14
 	// 非盘中
 	if !morning && !afternoon {
 		return u

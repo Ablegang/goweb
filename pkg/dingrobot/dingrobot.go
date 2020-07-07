@@ -1,3 +1,5 @@
+// 钉钉群机器人包
+
 package dingrobot
 
 import (
@@ -17,6 +19,7 @@ type Orientation string
 type AvatarState string
 
 const (
+	// 消息类型
 	TypeText       MessageType = "text"
 	TypeLink       MessageType = "link"
 	TypeMarkdown   MessageType = "markdown"
@@ -30,7 +33,7 @@ const (
 	HideAvatar AvatarState = "1"
 )
 
-// DingMessage 钉钉机器人消息
+// DingMessage 钉钉机器人消息结构体
 type DingMessage struct {
 	Type       MessageType       `json:"msgtype"`
 	Text       TextElement       `json:"text"`
@@ -41,17 +44,18 @@ type DingMessage struct {
 	At         AtElement         `json:"at"`
 }
 
+// At 的消息结构体
 type AtElement struct {
 	AtMobiles []string `json:"atMobiles"`
 	IsAtAll   bool     `json:"isAtAll"`
 }
 
-// TextElement 文本元素
+// 文本元素
 type TextElement struct {
 	Content string `json:"content"`
 }
 
-// LinkElement 链接元素
+// 链接元素
 type LinkElement struct {
 	Title      string `json:"title"`      // 消息标题
 	Text       string `json:"text"`       // 消息内容,如果太长只会部分展示
@@ -59,7 +63,7 @@ type LinkElement struct {
 	PictureURL string `json:"picUrl"`     // 图片 URL
 }
 
-// LinkElement 链接元素
+// 链接元素
 type FeedLinkElement struct {
 	Title      string `json:"title"`      // 消息标题
 	Text       string `json:"text"`       // 消息内容。如果太长只会部分展示
@@ -67,13 +71,13 @@ type FeedLinkElement struct {
 	PictureURL string `json:"picURL"`     // 图片 URL
 }
 
-// MarkdownElement Markdown 元素
+// Markdown 元素
 type MarkdownElement struct {
 	Title string `json:"title"` // 首屏会话透出的展示内容
 	Text  string `json:"text"`  // markdown 格式的消息
 }
 
-// ActionCardElement ActionCard元素
+// ActionCard 元素
 type ActionCardElement struct {
 	Title             string          `json:"title"`
 	Text              string          `json:"text"`
@@ -84,7 +88,7 @@ type ActionCardElement struct {
 	Buttons           []ButtonElement `json:"btns"`
 }
 
-// actionCardBuilder ActionCard 构造器
+// ActionCard 构造器
 type actionCardBuilder struct {
 	actionCard ActionCardElement
 }
