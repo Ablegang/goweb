@@ -107,7 +107,7 @@ func PostsDetail(c *gin.Context) {
 func CI(c *gin.Context) {
 	// hook 校验
 	hook, _ := github.New(github.Options.Secret(os.Getenv("GITHUB_WEBHOOK_BLOG_SECRET")))
-	payload, err := hook.Parse(c.Request, github.PushEvent)
+	payload, err := hook.Parse(c.Request, github.PushEvent, github.PingEvent)
 	if err != nil {
 		logrus.Errorln("BLOG CI 失败", err)
 		c.String(404, "404 not found")
