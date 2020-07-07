@@ -35,7 +35,7 @@ func ListenQuotesNotice() {
 			// 涨超 5%
 			if _, ok := zNoticed[name]; percent*100 >= 5 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "# 涨超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
+				md := "涨超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
 				err := robot.SendMessage(msg)
 				if err != nil {
@@ -53,7 +53,7 @@ func ListenQuotesNotice() {
 			// 涨超 2%
 			if _, ok := zNoticed[name]; percent*100 >= 2 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "# 涨超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
+				md := "涨超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
 				err := robot.SendMessage(msg)
 				if err != nil {
@@ -71,7 +71,7 @@ func ListenQuotesNotice() {
 			// 跌超 5%
 			if _, ok := dNoticed[name]; percent*100 <= -5 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "# 跌超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
+				md := "跌超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
 				err := robot.SendMessage(msg)
 				if err != nil {
@@ -89,7 +89,7 @@ func ListenQuotesNotice() {
 			// 跌超 2%
 			if _, ok := dNoticed[name]; percent*100 <= -2 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "# 跌超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
+				md := "跌超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
 				err := robot.SendMessage(msg)
 				if err != nil {
