@@ -22,7 +22,7 @@ func RecursiveGetDirList(path string, except string) ([]map[string]interface{}, 
 	// 遍历及递归
 	dirs := make([]map[string]interface{}, 0)
 	for _, v := range list {
-		if v.IsDir() {
+		if v.IsDir() && v.Name() != ".git" {
 			name := v.Name()
 			ut := v.ModTime().Format(hot.GetTimeCommonFormat())
 			exportedPath := path + name + "/"

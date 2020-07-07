@@ -108,7 +108,7 @@ func getPath(c *gin.Context) (string, string, error) {
 	// 请求参数
 	fullPath := rootDir
 	path, ok := c.GetQuery("path")
-	if ok {
+	if ok && path != ".git" {
 		fullPath += path
 		if string(fullPath[len(fullPath)-1:]) != "/" {
 			fullPath += "/"
