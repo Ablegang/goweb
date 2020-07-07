@@ -30,6 +30,9 @@ func init() {
 
 // 框架启动
 func Start() {
+	// 启动 cron 进程
+	go startCron()
+
 	port := os.Getenv("PORT")
 	err := r.Run(port)
 	if err != nil {
