@@ -63,6 +63,7 @@ env 不支持热更新
 - 所有文章都使用 markdown 编写，md 文件存储，github 托管
 - 文章内容单独放一个项目存储，由 spug 发布
 - 规划文章结构，目录为分类，md 文件为文章，更新时间用 fileinfo
+- blog 项目配置了 webhook，push 后自动 CD
 - 发布配置：
     - 排除文件：.git
     - 自定义全局变量：
