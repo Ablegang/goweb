@@ -27,13 +27,25 @@ func Markdown(params *MarkdownParams) {
 	}
 }
 
+// 文本通知参数
+type TextParams struct {
+	Ac         string
+	Text       string
+	At         []string
+	IsAtAll    bool
+	ErrHandler func(err error)
+}
+
 // 文本通知
-func Text(ac string, text string, at []string, isAtAll bool) {
-	robot := NewRobot(ac)
-	msg := NewMessageBuilder(TypeText).Text(text).At(at, isAtAll).Build()
+func Text(params *TextParams) {
+	robot := NewRobot(params.Ac)
+	msg := NewMessageBuilder(TypeText).Text(params.Text).At(params.At, params.IsAtAll).Build()
 	err := robot.SendMessage(msg)
 	if err != nil {
 		logrus.Errorln("钉钉推送失败", err)
+		if params.ErrHandler != nil {
+			params.ErrHandler(err)
+		}
 	}
 }
 

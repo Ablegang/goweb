@@ -136,7 +136,7 @@ func CI(c *gin.Context) {
 	md += "- Email：" + data.HeadCommit.Committer.Email + "\n"
 	md += "- 社区名：" + data.HeadCommit.Committer.Username + "\n"
 	dingrobot.Markdown(&dingrobot.MarkdownParams{
-		Ac: os.Getenv("LOG_DING_ACCESS_TOKEN"),
+		Ac: os.Getenv("BLOG_DING_ACCESS_TOKEN"),
 		Md: md,
 		Title: "Blog CI/CD",
 		At: []string{},
