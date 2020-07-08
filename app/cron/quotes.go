@@ -23,7 +23,7 @@ func ListenQuotesNotice() {
 	tick := time.NewTicker(5 * time.Second)
 	for true {
 		// 取数据
-		u := GetQuotes()
+		u := GetQuotes(os.Getenv("QUOTES"))
 		if len(u) == 0 {
 			<-tick.C
 			continue
@@ -123,7 +123,7 @@ func ListenQuotesCommonPush() {
 	tick := time.NewTicker(15 * time.Minute)
 	for true {
 		// 取数据
-		u := GetQuotes()
+		u := GetQuotes(os.Getenv("QUOTES"))
 		if len(u) == 0 {
 			<-tick.C
 			continue
@@ -204,7 +204,7 @@ func NearOpenNotice() {
 }
 
 // 取行情数据
-func GetQuotes() map[string]map[string]interface{} {
+func GetQuotes(quotesList string) map[string]map[string]interface{} {
 	u := make(map[string]map[string]interface{})
 	now := time.Now()
 	// 9 - 12
@@ -221,7 +221,7 @@ func GetQuotes() map[string]map[string]interface{} {
 		return u
 	}
 
-	url := "http://api.money.126.net/data/feed/" + os.Getenv("QUOTES")
+	url := "http://api.money.126.net/data/feed/" + quotesList
 	resp, _ := http.Get(url)
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
