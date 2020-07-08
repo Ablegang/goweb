@@ -14,8 +14,10 @@ import (
 // 涨跌幅通知
 func ListenQuotesNotice() {
 	// 已通知 map ，通知过后，10 分钟内不再通知
-	zNoticed := make(map[string]int, 0)
-	dNoticed := make(map[string]int, 0)
+	zNoticed2 := make(map[string]int, 0)
+	zNoticed5 := make(map[string]int, 0)
+	dNoticed2 := make(map[string]int, 0)
+	dNoticed5 := make(map[string]int, 0)
 
 	// 5 秒取数据
 	tick := time.NewTicker(5 * time.Second)
@@ -35,7 +37,7 @@ func ListenQuotesNotice() {
 			nowStr := strconv.FormatFloat(now, 'f', 6, 64)
 
 			// 涨超 5%
-			if _, ok := zNoticed[name]; percent*100 >= 5 && !ok {
+			if _, ok := zNoticed5[name]; percent*100 >= 5 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
 				md := "涨超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
@@ -43,17 +45,19 @@ func ListenQuotesNotice() {
 				if err != nil {
 					logrus.Errorln("钉钉行情推送失败", err)
 				}
-				zNoticed[name] = 1
+				zNoticed5[name] = 1
+				zNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
 				go func() {
 					timer := time.NewTimer(10 * time.Minute)
 					<-timer.C
-					delete(zNoticed, name)
+					delete(zNoticed5, name)
+					delete(zNoticed2, name)
 				}()
 			}
 
 			// 涨超 2%
-			if _, ok := zNoticed[name]; percent*100 >= 2 && !ok {
+			if _, ok := zNoticed2[name]; percent*100 >= 2 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
 				md := "涨超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
@@ -61,17 +65,17 @@ func ListenQuotesNotice() {
 				if err != nil {
 					logrus.Errorln("钉钉行情推送失败", err)
 				}
-				zNoticed[name] = 1
+				zNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
 				go func() {
 					timer := time.NewTimer(10 * time.Minute)
 					<-timer.C
-					delete(zNoticed, name)
+					delete(zNoticed2, name)
 				}()
 			}
 
 			// 跌超 5%
-			if _, ok := dNoticed[name]; percent*100 <= -5 && !ok {
+			if _, ok := dNoticed5[name]; percent*100 <= -5 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
 				md := "跌超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
@@ -79,17 +83,19 @@ func ListenQuotesNotice() {
 				if err != nil {
 					logrus.Errorln("钉钉行情推送失败", err)
 				}
-				dNoticed[name] = 1
+				dNoticed5[name] = 1
+				dNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
 				go func() {
 					timer := time.NewTimer(10 * time.Minute)
 					<-timer.C
-					delete(dNoticed, name)
+					delete(dNoticed5, name)
+					delete(dNoticed2, name)
 				}()
 			}
 
 			// 跌超 2%
-			if _, ok := dNoticed[name]; percent*100 <= -2 && !ok {
+			if _, ok := dNoticed2[name]; percent*100 <= -2 && !ok {
 				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
 				md := "跌超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
 				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
@@ -97,12 +103,12 @@ func ListenQuotesNotice() {
 				if err != nil {
 					logrus.Errorln("钉钉行情推送失败", err)
 				}
-				dNoticed[name] = 1
+				dNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
 				go func() {
 					timer := time.NewTimer(10 * time.Minute)
 					<-timer.C
-					delete(dNoticed, name)
+					delete(dNoticed2, name)
 				}()
 			}
 		}
