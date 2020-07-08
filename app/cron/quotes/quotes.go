@@ -61,6 +61,7 @@ func ListenQuotesNotice() {
 					IsAtAll: false,
 				})
 				zNoticed5[name] = 1
+				// 先发 5 的，接着就算大于 2 ，也不会再发了
 				zNoticed2[name] = 1
 
 				// 到了静默时间后从 zNoticed 里去除
@@ -137,7 +138,7 @@ func ListenQuotesNotice() {
 func ListenQuotesCommonPush() {
 	var (
 		TikeDua      = 15 * time.Minute
-		TemplateHead = "# 监控：\n @" + AtMobile
+		TemplateHead = "# 监控：\n @" + AtMobile + "\n"
 		TemplateBody = "- %s 涨跌幅：%s%% 现价：%s\n"
 	)
 

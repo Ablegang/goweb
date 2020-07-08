@@ -4,8 +4,9 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
+	// 环境变量提前载入，要比框架更早
+	_ "goweb/pkg/env"
 	"goweb/pkg/logs"
 	"goweb/pkg/logs/loghooks"
 	resp "goweb/pkg/response"
@@ -18,8 +19,6 @@ var r *gin.Engine
 
 // 初始化框架
 func init() {
-	// 环境变量
-	loadEnv()
 	// 注册日志组件
 	registerLogger()
 	// 实例化路由器
@@ -51,14 +50,6 @@ func registerLogger() {
 	log.AddHook(loghooks.NewEmailNotify())
 	log.AddHook(loghooks.NewFileWriter())
 	log.AddHook(loghooks.NewDingNotify(os.Getenv("LOG_DING_ACCESS_TOKEN")))
-}
-
-// 载入 .env
-func loadEnv() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Panicln("env load failed：", err)
-	}
 }
 
 // 实例化 gin 路由器
