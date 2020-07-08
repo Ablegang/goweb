@@ -176,6 +176,33 @@ func NearCloseNotice() {
 	}
 }
 
+// 开盘前通知
+func NearOpenNotice() {
+	// 每分钟
+	tick := time.NewTicker(time.Minute)
+	for true {
+		now := time.Now()
+		if now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
+			<-tick.C
+			continue
+		}
+		if now.Hour() != 9 || now.Minute() != 28 {
+			<-tick.C
+			continue
+		}
+
+		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
+		md := "# 临近开盘，特此提醒，切忌追涨杀跌，只在尾盘操作！"
+		msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
+		err := robot.SendMessage(msg)
+		if err != nil {
+			logrus.Errorln("钉钉行情推送失败", err)
+		}
+
+		<-tick.C
+	}
+}
+
 // 取行情数据
 func GetQuotes() map[string]map[string]interface{} {
 	u := make(map[string]map[string]interface{})
