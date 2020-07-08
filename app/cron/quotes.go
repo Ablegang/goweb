@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// 涨跌幅通知
 func ListenQuotesNotice() {
 	// 已通知 map ，通知过后，10 分钟内不再通知
 	zNoticed := make(map[string]int, 0)
@@ -22,6 +23,7 @@ func ListenQuotesNotice() {
 		// 取数据
 		u := GetQuotes()
 		if len(u) == 0 {
+			<-tick.C
 			continue
 		}
 		for _, v := range u {
@@ -109,13 +111,15 @@ func ListenQuotesNotice() {
 	}
 }
 
+// 自选通知
 func ListenQuotesCommonPush() {
-	// 13 分钟取一次数据
-	tick := time.NewTicker(13 * time.Minute)
+	// 15 分钟取一次数据
+	tick := time.NewTicker(15 * time.Minute)
 	for true {
 		// 取数据
 		u := GetQuotes()
 		if len(u) == 0 {
+			<-tick.C
 			continue
 		}
 		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
@@ -139,11 +143,40 @@ func ListenQuotesCommonPush() {
 	}
 }
 
+// 收盘前通知
+func NearCloseNotice() {
+	// 每分钟
+	tick := time.NewTicker(time.Minute)
+	for true {
+		now := time.Now()
+		if now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
+			<-tick.C
+			continue
+		}
+		if now.Hour() != 14 || now.Minute() != 54 {
+			<-tick.C
+			continue
+		}
+
+		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
+		md := "临近收盘，特此提醒，抓紧操作"
+		msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
+		err := robot.SendMessage(msg)
+		if err != nil {
+			logrus.Errorln("钉钉行情推送失败", err)
+		}
+
+		<-tick.C
+	}
+}
+
 // 取行情数据
 func GetQuotes() map[string]map[string]interface{} {
 	u := make(map[string]map[string]interface{})
 	now := time.Now()
-	morning := (now.Hour() >= 9 && now.Minute() >= 15) && (now.Hour() <= 11 && now.Minute() <= 30)
+	// 9 - 12
+	morning := (now.Hour() >= 9) && (now.Hour() <= 11)
+	// 13 - 15
 	afternoon := now.Hour() >= 13 && now.Hour() <= 14
 	// 非盘中
 	if !morning && !afternoon {
