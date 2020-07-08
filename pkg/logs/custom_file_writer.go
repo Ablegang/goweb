@@ -2,7 +2,6 @@ package logs
 
 import (
 	"errors"
-	"github.com/sirupsen/logrus"
 	"goweb/pkg/dingrobot"
 	"io"
 	"os"
@@ -72,13 +71,13 @@ func (writer *CustomFileWriter) Write(p []byte) (n int, err error) {
 
 	// robot
 	if writer.IsDingRobot {
-		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-		md := "# PROD Recover 告警：\n" + "```text\n" + string(p) + "\n```"
-		msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("PROD 接口告警", md).Build()
-		err = robot.SendMessage(msg)
-		if err != nil {
-			logrus.Println(err)
-		}
+		dingrobot.Markdown(&dingrobot.MarkdownParams{
+			Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+			Md:      "# PROD Recover 告警：\n" + "```text\n" + string(p) + "\n```",
+			Title:   "监控告警",
+			At:      []string{"15868100475"},
+			IsAtAll: true,
+		})
 	}
 
 	return n, nil

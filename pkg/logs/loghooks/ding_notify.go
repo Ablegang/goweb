@@ -43,23 +43,26 @@ func (e *dingNotify) Fire(entry *logrus.Entry) error {
 	}
 
 	// 钉钉机器人通知逻辑...
-	robot := dingrobot.NewRobot(e.accessToken)
 	b, _ := e.entryFormatter.Format(entry)
-	md := "# PROD Custom 告警：\n" + "```json\n" + string(b) + "\n```"
-	msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("PROD 接口告警", md).Build()
-	err = robot.SendMessage(msg)
-	if err != nil {
-		// 在这里不能使用 logrus 的 std 实例，否则会死锁
-		log := &logrus.Logger{
-			Out:          os.Stderr,
-			Formatter:    new(logrus.TextFormatter),
-			Hooks:        make(logrus.LevelHooks),
-			Level:        logrus.InfoLevel,
-			ExitFunc:     os.Exit,
-			ReportCaller: false,
-		}
-		log.Println("钉钉群机器人告警失败", err)
-	}
+	dingrobot.Markdown(&dingrobot.MarkdownParams{
+		Ac:      e.accessToken,
+		Md:      "# PROD Custom 告警：\n" + "```json\n" + string(b) + "\n```",
+		Title:   "PROD 接口告警",
+		At:      []string{},
+		IsAtAll: true,
+		ErrHandler: func(err error) {
+			// 在这里不能使用 logrus 的 std 实例，否则会死锁
+			log := &logrus.Logger{
+				Out:          os.Stderr,
+				Formatter:    new(logrus.TextFormatter),
+				Hooks:        make(logrus.LevelHooks),
+				Level:        logrus.InfoLevel,
+				ExitFunc:     os.Exit,
+				ReportCaller: false,
+			}
+			log.Println("钉钉群机器人告警失败", err)
+		},
+	})
 
 	return nil
 }

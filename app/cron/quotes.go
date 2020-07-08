@@ -2,7 +2,6 @@ package cron
 
 import (
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"goweb/pkg/dingrobot"
 	"io/ioutil"
 	"net/http"
@@ -38,13 +37,13 @@ func ListenQuotesNotice() {
 
 			// 涨超 5%
 			if _, ok := zNoticed5[name]; percent*100 >= 5 && !ok {
-				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "涨超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
-				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
-				err := robot.SendMessage(msg)
-				if err != nil {
-					logrus.Errorln("钉钉行情推送失败", err)
-				}
+				dingrobot.Markdown(&dingrobot.MarkdownParams{
+					Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+					Md:      "涨超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n",
+					Title:   "行情播报",
+					At:      []string{"15868100475"},
+					IsAtAll: false,
+				})
 				zNoticed5[name] = 1
 				zNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
@@ -58,13 +57,13 @@ func ListenQuotesNotice() {
 
 			// 涨超 2%
 			if _, ok := zNoticed2[name]; percent*100 >= 2 && !ok {
-				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "涨超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
-				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
-				err := robot.SendMessage(msg)
-				if err != nil {
-					logrus.Errorln("钉钉行情推送失败", err)
-				}
+				dingrobot.Markdown(&dingrobot.MarkdownParams{
+					Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+					Md:      "涨超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n",
+					Title:   "行情播报",
+					At:      []string{"15868100475"},
+					IsAtAll: false,
+				})
 				zNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
 				go func() {
@@ -76,13 +75,13 @@ func ListenQuotesNotice() {
 
 			// 跌超 5%
 			if _, ok := dNoticed5[name]; percent*100 <= -5 && !ok {
-				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "跌超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
-				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
-				err := robot.SendMessage(msg)
-				if err != nil {
-					logrus.Errorln("钉钉行情推送失败", err)
-				}
+				dingrobot.Markdown(&dingrobot.MarkdownParams{
+					Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+					Md:      "跌超5%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n",
+					Title:   "行情播报",
+					At:      []string{"15868100475"},
+					IsAtAll: false,
+				})
 				dNoticed5[name] = 1
 				dNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
@@ -96,13 +95,13 @@ func ListenQuotesNotice() {
 
 			// 跌超 2%
 			if _, ok := dNoticed2[name]; percent*100 <= -2 && !ok {
-				robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-				md := "跌超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n"
-				msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
-				err := robot.SendMessage(msg)
-				if err != nil {
-					logrus.Errorln("钉钉行情推送失败", err)
-				}
+				dingrobot.Markdown(&dingrobot.MarkdownParams{
+					Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+					Md:      "跌超2%：" + name + "\n" + "- " + percentStr + "%" + " " + nowStr + " \n",
+					Title:   "行情播报",
+					At:      []string{"15868100475"},
+					IsAtAll: false,
+				})
 				dNoticed2[name] = 1
 				// 10 分钟后从 zNoticed 里去除
 				go func() {
@@ -128,7 +127,6 @@ func ListenQuotesCommonPush() {
 			<-tick.C
 			continue
 		}
-		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
 		md := "# 监控：\n"
 		for _, v := range u {
 			// 解析数据
@@ -139,11 +137,14 @@ func ListenQuotesCommonPush() {
 			nowStr := strconv.FormatFloat(now, 'f', 6, 64)
 			md += "- " + name + " 涨跌幅：" + percentStr + "% 现价：" + nowStr + "\n"
 		}
-		msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
-		err := robot.SendMessage(msg)
-		if err != nil {
-			logrus.Errorln("钉钉行情推送失败", err)
-		}
+
+		dingrobot.Markdown(&dingrobot.MarkdownParams{
+			Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+			Md:      md,
+			Title:   "行情播报",
+			At:      []string{"15868100475"},
+			IsAtAll: false,
+		})
 
 		<-tick.C
 	}
@@ -164,13 +165,13 @@ func NearCloseNotice() {
 			continue
 		}
 
-		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-		md := "临近收盘，特此提醒，抓紧操作"
-		msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
-		err := robot.SendMessage(msg)
-		if err != nil {
-			logrus.Errorln("钉钉行情推送失败", err)
-		}
+		dingrobot.Markdown(&dingrobot.MarkdownParams{
+			Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+			Md:      "临近收盘，特此提醒，抓紧操作",
+			Title:   "行情播报",
+			At:      []string{"15868100475"},
+			IsAtAll: false,
+		})
 
 		<-tick.C
 	}
@@ -191,13 +192,13 @@ func NearOpenNotice() {
 			continue
 		}
 
-		robot := dingrobot.NewRobot(os.Getenv("LOG_DING_ACCESS_TOKEN"))
-		md := "# 临近开盘，特此提醒，切忌追涨杀跌，只在尾盘操作！"
-		msg := dingrobot.NewMessageBuilder(dingrobot.TypeMarkdown).Markdown("市场监控", md).Build()
-		err := robot.SendMessage(msg)
-		if err != nil {
-			logrus.Errorln("钉钉行情推送失败", err)
-		}
+		dingrobot.Markdown(&dingrobot.MarkdownParams{
+			Ac:      os.Getenv("LOG_DING_ACCESS_TOKEN"),
+			Md:      "# 临近开盘，特此提醒，切忌追涨杀跌，只在尾盘操作！",
+			Title:   "行情播报",
+			At:      []string{"15868100475"},
+			IsAtAll: false,
+		})
 
 		<-tick.C
 	}
