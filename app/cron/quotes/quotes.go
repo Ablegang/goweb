@@ -25,8 +25,8 @@ func ListenQuotesNotice() {
 	var (
 		Z5Template = "涨超5%%：%s \n - 涨幅 %s%% 现价：%s \n @%s"
 		Z2Template = "涨超2%%：%s \n - 涨幅 %s%% 现价：%s \n @%s"
-		D5Template = "跌超5%%：%s \n - 涨幅 %s%% 现价：%s \n @%s"
-		D2Template = "跌超2%%：%s \n - 涨幅 %s%% 现价：%s \n @%s"
+		D5Template = "跌超5%%：%s \n - 跌幅 %s%% 现价：%s \n @%s"
+		D2Template = "跌超2%%：%s \n - 跌幅 %s%% 现价：%s \n @%s"
 
 		// 已推送列表（只要在列表内，同一事件就不再推送）
 		zNoticed2 = make(map[string]int, 0)
@@ -253,7 +253,7 @@ func FormatQuotesCoreData(data map[string]interface{}) (string, float64, string,
 	name, _ := data["name"].(string)
 	percent, _ := data["percent"].(float64)
 	percentStr := strconv.FormatFloat(percent*100, 'f', 6, 64)
-	now := data["price"].(float64)
+	now, _ := data["price"].(float64)
 	nowStr := strconv.FormatFloat(now, 'f', 6, 64)
 	return name, percent, percentStr, now, nowStr
 }
