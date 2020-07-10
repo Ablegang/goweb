@@ -187,10 +187,10 @@ func NearCloseNotice() {
 
 		dingrobot.Markdown(&dingrobot.MarkdownParams{
 			Ac:      RobotToken,
-			Md:      "# 临近收盘，特此提醒，抓紧操作 @" + AtMobile,
+			Md:      "# 临近收盘，特此提醒，抓紧操作 \n @所有人",
 			Title:   CommonTitle,
-			At:      []string{AtMobile},
-			IsAtAll: false,
+			At:      []string{},
+			IsAtAll: true,
 		})
 
 		<-tick.C
@@ -214,10 +214,10 @@ func NearOpenNotice() {
 
 		dingrobot.Markdown(&dingrobot.MarkdownParams{
 			Ac:      RobotToken,
-			Md:      "# 临近开盘，特此提醒，切忌追涨杀跌，只在尾盘操作！",
+			Md:      "# 临近开盘，特此提醒，切忌追涨杀跌，只在尾盘操作！ \n @所有人",
 			Title:   CommonTitle,
-			At:      []string{"15868100475"},
-			IsAtAll: false,
+			At:      []string{},
+			IsAtAll: true,
 		})
 
 		<-tick.C
