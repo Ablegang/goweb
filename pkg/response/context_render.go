@@ -43,7 +43,7 @@ func String(c *gin.Context, code int, format string, values ...interface{}) {
 }
 
 // 成功响应 Json
-func SuccessJson(c *gin.Context, g gin.H) {
+func SuccessJson(c *gin.Context, g interface{}) {
 	JSON(c, 200, gin.H{
 		"code":         DefaultSuccessCode,
 		"msg":          DefaultSuccessMsg,
@@ -54,7 +54,7 @@ func SuccessJson(c *gin.Context, g gin.H) {
 }
 
 // 失败响应 Json
-func FailJson(c *gin.Context, g gin.H, values ...interface{}) {
+func FailJson(c *gin.Context, g interface{}, values ...interface{}) {
 	code := DefaultFailCode
 	if helper.IssetArrayIndex(values, 0) {
 		code, _ = values[0].(int)

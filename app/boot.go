@@ -5,6 +5,8 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"goweb/app/models"
+
 	// 环境变量提前载入，要比框架更早
 	_ "goweb/pkg/env"
 	"goweb/pkg/logs"
@@ -25,6 +27,8 @@ func init() {
 	r = router()
 	// 注册路由
 	registerRoute(r)
+	// 注册数据库引擎
+	models.Load()
 }
 
 // 框架启动

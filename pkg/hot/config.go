@@ -42,6 +42,7 @@ func loadYaml() {
 	if err != nil {
 		logrus.Errorln("配置文件转码失败：", err)
 	}
+
 }
 
 // 取配置项
@@ -55,6 +56,7 @@ func GetConfig(name string) interface{} {
 
 	for key, value := range path {
 		v, ok := data[value]
+
 		if !ok {
 			break
 		}
@@ -62,6 +64,7 @@ func GetConfig(name string) interface{} {
 		if (key + 1) == len(path) {
 			return v
 		}
+
 		if reflect.TypeOf(v).String() == "map[interface {}]interface {}" {
 			data = v.(map[interface{}]interface{})
 		}

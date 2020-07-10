@@ -3,10 +3,15 @@
 package helper
 
 import (
+	"crypto/sha1"
 	"errors"
+	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	"goweb/pkg/hot"
 	"io/ioutil"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -57,10 +62,36 @@ func GetBlogRoot() (string, error) {
 }
 
 // 获取格式 path
-func FormatPath(path string, except string) string {
+func FormatPath(path, except string) string {
 	s := strings.Replace(path, except, "", 1)
 	if len(s) == 0 {
 		return ""
 	}
 	return string(s[0 : len(s)-1])
+}
+
+// 检查密码格式
+func CheckPwd(pwdAndSalt, sha1String string) bool {
+	return Sha1(pwdAndSalt) == sha1String
+}
+
+// Sha1 加密
+func Sha1(s string) string {
+	h := sha1.New()
+	h.Write([]byte(s))
+	l := fmt.Sprintf("%x", h.Sum(nil))
+	return l
+}
+
+// 生成 jwt token
+func JwtToken(s string) (string, int) {
+	expired, _ := strconv.Atoi(os.Getenv("EXPIRES_AT"))
+	claims := &jwt.StandardClaims{
+		ExpiresAt: int64(expired),
+		Issuer:    os.Getenv("ISSUER"),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	t, _ := token.SignedString([]byte(s))
+	return t, expired
 }

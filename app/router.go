@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	"goweb/app/handlers/blog"
+	"goweb/app/handlers/show"
 	"goweb/pkg/hot"
 	resp "goweb/pkg/response"
 	"time"
@@ -20,6 +21,9 @@ func registerRoute(r *gin.Engine) {
 
 	// blog
 	blogRouter(r.Group("blog"))
+
+	// show
+	showRouter(r.Group("show"))
 }
 
 // 博客路由
@@ -32,4 +36,9 @@ func blogRouter(r *gin.RouterGroup) {
 	r.GET("posts.detail", blog.PostsDetail)
 	// CI
 	r.POST("ci", blog.CI)
+}
+
+// show 路由
+func showRouter(r *gin.RouterGroup) {
+	r.Any("lg", show.Login)
 }

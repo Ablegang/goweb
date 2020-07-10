@@ -3,7 +3,7 @@ package loghooks
 import (
 	"github.com/sirupsen/logrus"
 	"goweb/pkg/dingrobot"
-	"os"
+	"goweb/pkg/logs"
 	"time"
 )
 
@@ -52,15 +52,7 @@ func (e *dingNotify) Fire(entry *logrus.Entry) error {
 		IsAtAll: true,
 		ErrHandler: func(err error) {
 			// 在这里不能使用 logrus 的 std 实例，否则会死锁
-			log := &logrus.Logger{
-				Out:          os.Stderr,
-				Formatter:    new(logrus.TextFormatter),
-				Hooks:        make(logrus.LevelHooks),
-				Level:        logrus.InfoLevel,
-				ExitFunc:     os.Exit,
-				ReportCaller: false,
-			}
-			log.Println("钉钉群机器人告警失败", err)
+			logs.Println("钉钉群机器人告警失败", err)
 		},
 	})
 
