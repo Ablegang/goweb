@@ -24,6 +24,7 @@ var (
 )
 
 func Load() {
+	// 取数据库配置
 	cgs, _ := hot.GetConfig("mysqlDBs").([]interface{})
 	if len(cgs) == 0 {
 		logs.Panicln("数据库配置有误")

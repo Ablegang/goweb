@@ -240,7 +240,11 @@ func GetQuotes(quotesList string) map[string]map[string]interface{} {
 	}
 
 	url := SpiderApi + quotesList
-	resp, _ := http.Get(url)
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	_ = json.Unmarshal(body[21:len(body)-2], &u)
