@@ -41,4 +41,5 @@ func blogRouter(r *gin.RouterGroup) {
 // show 路由
 func showRouter(r *gin.RouterGroup) {
 	r.Any("lg", show.Login)
+	r.Any("add", show.Add)
 }

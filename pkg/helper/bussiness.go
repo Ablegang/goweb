@@ -3,9 +3,7 @@
 package helper
 
 import (
-	"crypto/sha1"
 	"errors"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	"goweb/pkg/hot"
@@ -71,16 +69,13 @@ func FormatPath(path, except string) string {
 }
 
 // 检查密码格式
-func CheckPwd(pwdAndSalt, sha1String string) bool {
-	return Sha1(pwdAndSalt) == sha1String
+func CheckPwd(pwd, salt, sha1String string) bool {
+	return Pwd(pwd, salt) == sha1String
 }
 
-// Sha1 加密
-func Sha1(s string) string {
-	h := sha1.New()
-	h.Write([]byte(s))
-	l := fmt.Sprintf("%x", h.Sum(nil))
-	return l
+// 生成密码
+func Pwd(pwd, salt string) string {
+	return Sha1(pwd + salt)
 }
 
 // 生成 jwt token

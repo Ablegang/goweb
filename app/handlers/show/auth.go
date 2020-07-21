@@ -9,14 +9,18 @@ import (
 	"goweb/pkg/helper"
 	"goweb/pkg/request"
 	resp "goweb/pkg/response"
+	"math/rand"
+	"strconv"
 	"time"
 )
 
+// 登录表单
 type LoginForm struct {
-	UserName string `json:"name" form:"name" validate:"max=20,min=2"`
+	UserName string `json:"name" form:"name" validate:"max=30,min=2"`
 	Pwd      string `json:"pwd" form:"pwd" validate:"max=30,min=6"`
 }
 
+// 登录处理
 func Login(c *gin.Context) {
 	// 入参
 	req := &LoginForm{}
@@ -36,7 +40,7 @@ func Login(c *gin.Context) {
 	}
 
 	// 校验密码
-	ok := helper.CheckPwd(req.Pwd+admin.Salt, admin.Pwd)
+	ok := helper.CheckPwd(req.Pwd, admin.Salt, admin.Pwd)
 	if !ok {
 		resp.FailJson(c, gin.H{}, -1, "密码错误")
 		return
@@ -58,4 +62,50 @@ func Login(c *gin.Context) {
 		"token":     token,
 		"expiredAt": expiredAt,
 	})
+}
+
+// 添加用户表单
+type AddForm struct {
+	Name  string `json:"name" form:"name" validate:"max=30,min=2"`
+	Email string `json:"email" form:"email" validate:"omitempty,email"`
+	Phone string `json:"phone" form:"phone" validate:"omitempty,min=11,max=11"`
+	Pwd   string `json:"pwd" form:"pwd" validate:"max=30,min=6"`
+}
+
+// 添加用户处理
+func Add(c *gin.Context) {
+	// 入参
+	req := &AddForm{}
+	if err := request.Bind(c, req); err != nil {
+		resp.FailJson(c, gin.H{}, -1, err.Error())
+		return
+	}
+
+	// 唯一性校验
+	admin := show.Admin{}
+	has, _ := models.Show().Where("email = ?", req.Email).Or("phone = ?", req.Phone).Get(&admin)
+	if has {
+		resp.FailJson(c, gin.H{}, -1, "已存在手机号或 email")
+		return
+	}
+
+	// 插入数据
+	salt := helper.Md5(strconv.Itoa(rand.Intn(10000)))
+	_, err := models.Show().Insert(&show.Admin{
+		Name:        req.Name,
+		Email:       req.Email,
+		Phone:       req.Phone,
+		Salt:        salt,
+		Pwd:         helper.Pwd(req.Pwd, salt),
+		LastLoginAt: time.Now(),
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	})
+	if err != nil {
+		resp.FailJson(c, gin.H{}, -1, err.Error())
+		return
+	}
+
+	resp.SuccessJson(c, gin.H{})
+	return
 }
