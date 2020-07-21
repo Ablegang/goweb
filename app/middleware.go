@@ -5,6 +5,7 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	"goweb/pkg/hot"
+	resp "goweb/pkg/response"
 )
 
 // 跨域
@@ -24,6 +25,22 @@ func Cors() gin.HandlerFunc {
 		c.Header("Author", author)
 		c.Header("PowerBy", powerBy)
 		c.Header("PowerBy2", powerBy2)
+		c.Next()
+	}
+}
+
+// jwt 验证中间件
+func JwtAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.GetHeader("Authorization")
+		if len(token) <= 25 {
+			resp.FailJson(c, "请先登录！")
+			c.Abort()
+			return
+		}
+
+
+
 		c.Next()
 	}
 }

@@ -4,20 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"goweb/app/handlers/blog"
 	"goweb/app/handlers/show"
-	"goweb/pkg/hot"
-	resp "goweb/pkg/response"
-	"time"
 )
 
 // 注册路由
 func registerRoute(r *gin.Engine) {
 	// 跨域处理
 	r.Use(Cors())
-
-	// 根目录
-	r.GET("/", func(c *gin.Context) {
-		resp.String(c, 200, time.Now().Format(hot.GetTimeCommonFormat()))
-	})
 
 	// blog
 	blogRouter(r.Group("blog"))
@@ -41,5 +33,8 @@ func blogRouter(r *gin.RouterGroup) {
 // show 路由
 func showRouter(r *gin.RouterGroup) {
 	r.Any("lg", show.Login)
-	r.Any("add", show.Add)
+
+	// 需登录
+	auth := r.Use(JwtAuth())
+	auth.Any("add", show.Add)
 }

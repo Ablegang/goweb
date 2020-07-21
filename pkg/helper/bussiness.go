@@ -68,19 +68,10 @@ func FormatPath(path, except string) string {
 	return string(s[0 : len(s)-1])
 }
 
-// 检查密码格式
-func CheckPwd(pwd, salt, sha1String string) bool {
-	return Pwd(pwd, salt) == sha1String
-}
-
-// 生成密码
-func Pwd(pwd, salt string) string {
-	return Sha1(pwd + salt)
-}
-
 // 生成 jwt token
 func JwtToken(s string) (string, int) {
 	expired, _ := strconv.Atoi(os.Getenv("EXPIRES_AT"))
+	// 元数据，对 token 的修饰，如过期时间、发行人
 	claims := &jwt.StandardClaims{
 		ExpiresAt: int64(expired),
 		Issuer:    os.Getenv("ISSUER"),
@@ -89,4 +80,14 @@ func JwtToken(s string) (string, int) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	t, _ := token.SignedString([]byte(s))
 	return t, expired
+}
+
+// 验证 jwt token
+func JwtCheck(s string) error {
+	token, err := jwt.ParseWithClaims(s, &jwt.StandardClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			// since we only use the one private key to sign the tokens,
+			// we also only use its public counter part to verify
+			return verifyKey, nil
+		})
 }

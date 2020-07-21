@@ -7,6 +7,7 @@ import (
 	"goweb/app/models"
 	"goweb/app/models/show"
 	"goweb/pkg/helper"
+	"goweb/pkg/passport"
 	"goweb/pkg/request"
 	resp "goweb/pkg/response"
 	"math/rand"
@@ -17,7 +18,7 @@ import (
 // 登录表单
 type LoginForm struct {
 	UserName string `json:"name" form:"name" validate:"max=30,min=2"`
-	Pwd      string `json:"pwd" form:"pwd" validate:"max=30,min=6"`
+	Pwd      string `json:"passport" form:"passport" validate:"max=30,min=6"`
 }
 
 // 登录处理
@@ -40,7 +41,7 @@ func Login(c *gin.Context) {
 	}
 
 	// 校验密码
-	ok := helper.CheckPwd(req.Pwd, admin.Salt, admin.Pwd)
+	ok := passport.CheckPwd(req.Pwd, admin.Salt, admin.Pwd)
 	if !ok {
 		resp.FailJson(c, gin.H{}, -1, "密码错误")
 		return
@@ -69,7 +70,7 @@ type AddForm struct {
 	Name  string `json:"name" form:"name" validate:"max=30,min=2"`
 	Email string `json:"email" form:"email" validate:"omitempty,email"`
 	Phone string `json:"phone" form:"phone" validate:"omitempty,min=11,max=11"`
-	Pwd   string `json:"pwd" form:"pwd" validate:"max=30,min=6"`
+	Pwd   string `json:"passport" form:"passport" validate:"max=30,min=6"`
 }
 
 // 添加用户处理
@@ -96,7 +97,7 @@ func Add(c *gin.Context) {
 		Email:       req.Email,
 		Phone:       req.Phone,
 		Salt:        salt,
-		Pwd:         helper.Pwd(req.Pwd, salt),
+		Pwd:         passport.Pwd(req.Pwd, salt),
 		LastLoginAt: time.Now(),
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
@@ -106,6 +107,7 @@ func Add(c *gin.Context) {
 		return
 	}
 
+	// 响应
 	resp.SuccessJson(c, gin.H{})
 	return
 }
