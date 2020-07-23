@@ -130,3 +130,6 @@ gin.Context.Get("RequestId") 即可在其他 Handlers 中获取
 - 定义结构体
 - 结构体 tag 不要用 binding，要用 validate
 - 使用 request 包
+
+# passport 包
+使用 jwt 作为登录验证

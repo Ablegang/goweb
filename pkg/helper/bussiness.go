@@ -4,12 +4,9 @@ package helper
 
 import (
 	"errors"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	"goweb/pkg/hot"
 	"io/ioutil"
-	"os"
-	"strconv"
 	"strings"
 )
 
@@ -66,28 +63,4 @@ func FormatPath(path, except string) string {
 		return ""
 	}
 	return string(s[0 : len(s)-1])
-}
-
-// 生成 jwt token
-func JwtToken(s string) (string, int) {
-	expired, _ := strconv.Atoi(os.Getenv("EXPIRES_AT"))
-	// 元数据，对 token 的修饰，如过期时间、发行人
-	claims := &jwt.StandardClaims{
-		ExpiresAt: int64(expired),
-		Issuer:    os.Getenv("ISSUER"),
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	t, _ := token.SignedString([]byte(s))
-	return t, expired
-}
-
-// 验证 jwt token
-func JwtCheck(s string) error {
-	token, err := jwt.ParseWithClaims(s, &jwt.StandardClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			// since we only use the one private key to sign the tokens,
-			// we also only use its public counter part to verify
-			return verifyKey, nil
-		})
 }

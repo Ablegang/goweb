@@ -1,7 +1,6 @@
 package show
 
 import (
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"goweb/app/models"
@@ -18,7 +17,7 @@ import (
 // 登录表单
 type LoginForm struct {
 	UserName string `json:"name" form:"name" validate:"max=30,min=2"`
-	Pwd      string `json:"passport" form:"passport" validate:"max=30,min=6"`
+	Pwd      string `json:"pwd" form:"pwd" validate:"max=30,min=6"`
 }
 
 // 登录处理
@@ -48,8 +47,8 @@ func Login(c *gin.Context) {
 	}
 
 	// 登录成功，生成 Token
-	info, _ := json.Marshal(admin)
-	token, expiredAt := helper.JwtToken(string(info))
+	cl, expiredDur := passport.NewCustomClaims(admin)
+	token, _ := passport.NewJwt().CreateToken(*cl)
 
 	// 更新登录时间
 	admin.LastLoginAt = time.Now()
@@ -60,8 +59,8 @@ func Login(c *gin.Context) {
 
 	// 响应
 	resp.SuccessJson(c, gin.H{
-		"token":     token,
-		"expiredAt": expiredAt,
+		"token":      token,
+		"expiredDur": expiredDur,
 	})
 }
 
@@ -70,7 +69,7 @@ type AddForm struct {
 	Name  string `json:"name" form:"name" validate:"max=30,min=2"`
 	Email string `json:"email" form:"email" validate:"omitempty,email"`
 	Phone string `json:"phone" form:"phone" validate:"omitempty,min=11,max=11"`
-	Pwd   string `json:"passport" form:"passport" validate:"max=30,min=6"`
+	Pwd   string `json:"pwd" form:"pwd" validate:"max=30,min=6"`
 }
 
 // 添加用户处理

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"goweb/app/handlers/blog"
 	"goweb/app/handlers/show"
+	"goweb/pkg/passport"
 )
 
 // 注册路由
@@ -35,6 +36,6 @@ func showRouter(r *gin.RouterGroup) {
 	r.Any("lg", show.Login)
 
 	// 需登录
-	auth := r.Use(JwtAuth())
+	auth := r.Use(passport.JwtAuth())
 	auth.Any("add", show.Add)
 }
