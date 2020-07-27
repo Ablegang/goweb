@@ -52,7 +52,7 @@ func (e *dingNotify) Fire(entry *logrus.Entry) error {
 		IsAtAll: true,
 		ErrHandler: func(err error) {
 			// 在这里不能使用 logrus 的 std 实例，否则会死锁
-			logs.Println("钉钉群机器人告警失败", err)
+			logs.Println("钉钉通知失败", err)
 		},
 	})
 

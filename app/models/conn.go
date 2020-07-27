@@ -19,6 +19,7 @@ var (
 		// show 的表
 		"show": []interface{}{
 			&show.Admin{},
+			&show.Quote{},
 		},
 	}
 )

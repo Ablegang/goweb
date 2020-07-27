@@ -4,6 +4,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// 钉钉通知 err 不可使用 logrus.Error 及以上级别，否则会陷入死循环：失败--触发钩子--钩子调推送--失败
+// 所以只有用不会触发钩子的错误级别
+
 // Markdown 参数
 type MarkdownParams struct {
 	Ac         string
@@ -20,9 +23,10 @@ func Markdown(params *MarkdownParams) {
 	msg := NewMessageBuilder(TypeMarkdown).Markdown(params.Title, params.Md).At(params.At, params.IsAtAll).Build()
 	err := robot.SendMessage(msg)
 	if err != nil {
-		logrus.Errorln("钉钉推送失败", err)
 		if params.ErrHandler != nil {
 			params.ErrHandler(err)
+		} else {
+			logrus.Println("钉钉通知失败", err)
 		}
 	}
 }
@@ -42,9 +46,10 @@ func Text(params *TextParams) {
 	msg := NewMessageBuilder(TypeText).Text(params.Text).At(params.At, params.IsAtAll).Build()
 	err := robot.SendMessage(msg)
 	if err != nil {
-		logrus.Errorln("钉钉推送失败", err)
 		if params.ErrHandler != nil {
 			params.ErrHandler(err)
+		} else {
+			logrus.Println("钉钉通知失败", err)
 		}
 	}
 }
@@ -57,7 +62,7 @@ func Link(ac string, link map[string]string, at []string, isAtAll bool) {
 	msg := build.Build()
 	err := robot.SendMessage(msg)
 	if err != nil {
-		logrus.Errorln("钉钉推送失败", err)
+		logrus.Println("钉钉通知失败", err)
 	}
 }
 

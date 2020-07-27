@@ -33,9 +33,23 @@ func blogRouter(r *gin.RouterGroup) {
 
 // show 路由
 func showRouter(r *gin.RouterGroup) {
-	r.Any("lg", show.Login)
+	// 登录
+	r.Any("login", show.Login)
 
-	// 需登录
 	auth := r.Use(passport.JwtAuth())
-	auth.Any("add", show.Add)
+
+	// 添加账号
+	auth.Any("admin.add", show.AddAdmin)
+	// 添加标的
+	auth.Any("quote.add", show.QuoteAdd)
+	// 编辑标的
+	auth.Any("quote.edit", show.QuoteEdit)
+	// 删除标的
+	auth.Any("quote.del", show.QuoteDel)
+	// 标的信息
+	auth.Any("quote.info", show.QuoteInfo)
+	// 标的列表（观察中、往期）
+	auth.Any("quote.ls", show.QuoteList)
+	// 下架标的
+	auth.Any("quote.off", show.QuoteOff)
 }

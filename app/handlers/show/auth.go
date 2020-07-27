@@ -65,7 +65,7 @@ func Login(c *gin.Context) {
 }
 
 // 添加用户表单
-type AddForm struct {
+type AddAdminForm struct {
 	Name  string `json:"name" form:"name" validate:"max=30,min=2"`
 	Email string `json:"email" form:"email" validate:"omitempty,email"`
 	Phone string `json:"phone" form:"phone" validate:"omitempty,min=11,max=11"`
@@ -73,9 +73,9 @@ type AddForm struct {
 }
 
 // 添加用户处理
-func Add(c *gin.Context) {
+func AddAdmin(c *gin.Context) {
 	// 入参
-	req := &AddForm{}
+	req := &AddAdminForm{}
 	if err := request.Bind(c, req); err != nil {
 		resp.FailJson(c, gin.H{}, -1, err.Error())
 		return

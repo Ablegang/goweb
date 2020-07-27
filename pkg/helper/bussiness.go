@@ -10,6 +10,13 @@ import (
 	"strings"
 )
 
+// 通用分页表单参数
+type CommonPageForm struct {
+	Page    int    `json:"page" form:"page" validate:"omitempty,numeric,min=1"`
+	Limit   int    `json:"limit" form:"limit" validate:"omitempty,numeric,min=1"`
+	Keyword string `json:"keyword" form:"keyword" validate:"omitempty,min=1,max=50"`
+}
+
 // 递归读取目录及所有子目录
 // except 用于去除 path 中的某些字符，比如，.makrdown/PHP/Laravel 想要去除 .markdown
 func RecursiveGetDirList(path string, except string) ([]map[string]interface{}, error) {
