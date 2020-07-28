@@ -7,6 +7,7 @@ import (
 	"goweb/app/models"
 	"goweb/app/models/show"
 	"goweb/pkg/dingrobot"
+	"goweb/pkg/helper"
 	"goweb/pkg/quotes"
 	"goweb/pkg/request"
 	resp "goweb/pkg/response"
@@ -28,12 +29,6 @@ type QuoteId struct {
 type AddQuoteForm struct {
 	Key string `json:"key" form:"key" validate:"len=7"`
 	QuoteReason
-}
-
-// 编辑表单
-type EditQuoteForm struct {
-	QuoteId
-	AddQuoteForm
 }
 
 // 下架表单
@@ -120,27 +115,101 @@ func QuoteAdd(c *gin.Context) {
 	return
 }
 
-// 编辑标的
-func QuoteEdit(c *gin.Context) {
-
-}
-
 // 删除标的
 func QuoteDel(c *gin.Context) {
+	req := &QuoteId{}
+	if err := request.Bind(c, req); err != nil {
+		resp.FailJson(c, gin.H{}, -1, err.Error())
+		return
+	}
 
+	// 查询数据
+	quote := show.Quote{}
+	has, _ := models.Show().Where("id = ?", req.Id).Get(&quote)
+	if !has {
+		resp.FailJson(c, gin.H{}, -1, "数据不存在")
+		return
+	}
+
+	// 删除数据
+	res, _ := models.Show().Delete(&quote)
+	if res <= 0 {
+		resp.FailJson(c, gin.H{}, -1, "删除失败")
+		return
+	}
+
+	resp.SuccessJson(c, gin.H{})
 }
 
 // 标的信息
 func QuoteInfo(c *gin.Context) {
+	// 入参
+	req := &QuoteId{}
+	if err := request.Bind(c, req); err != nil {
+		resp.FailJson(c, gin.H{}, -1, err.Error())
+		return
+	}
 
+	// 查询数据
+	quote := show.Quote{}
+	has, _ := models.Show().Where("id = ?", req.Id).Get(&quote)
+	if !has {
+		resp.FailJson(c, gin.H{}, -1, "数据不存在")
+		return
+	}
+
+	resp.SuccessJson(c, quote)
+	return
 }
 
 // 标的列表
 func QuoteList(c *gin.Context) {
+	// 入参
+	req := &helper.CommonPageForm{}
+	if err := request.Bind(c, req); err != nil {
+		resp.FailJson(c, gin.H{}, -1, err.Error())
+		return
+	}
 
+	list := make([]show.Quote, 0)
+	query := models.Show().Where("name like '%?%'", req.Keyword).Or("number like '%?%'", req.Keyword)
+	total, _ := query.Count(new(show.Quote))
+	err := query.Limit(req.Limit, (req.Page-1)*req.Limit).Find(&list)
+	if err != nil {
+		resp.FailJson(c, gin.H{}, -1, err.Error())
+		return
+	}
+
+	resp.SuccessJson(c, gin.H{
+		"total": total,
+		"list":  list,
+	})
 }
 
 // 下架标的
 func QuoteOff(c *gin.Context) {
+	req := &OffQuoteForm{}
+	if err := request.Bind(c, req); err != nil {
+		resp.FailJson(c, gin.H{}, -1, err.Error())
+		return
+	}
 
+	// 查询数据
+	quote := show.Quote{}
+	has, _ := models.Show().Where("id = ?", req.Id).Get(&quote)
+	if !has {
+		resp.FailJson(c, gin.H{}, -1, "数据不存在")
+		return
+	}
+
+	// 下架
+	quote.Status = OffState
+	quote.OffReason = req.Reason
+	res, _ := models.Show().Update(&quote)
+	if res <= 0 {
+		resp.FailJson(c, gin.H{}, -1, "下架失败")
+		return
+	}
+
+	resp.SuccessJson(c, gin.H{})
 }

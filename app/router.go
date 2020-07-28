@@ -42,8 +42,6 @@ func showRouter(r *gin.RouterGroup) {
 	auth.Any("admin.add", show.AddAdmin)
 	// 添加标的
 	auth.Any("quote.add", show.QuoteAdd)
-	// 编辑标的
-	auth.Any("quote.edit", show.QuoteEdit)
 	// 删除标的
 	auth.Any("quote.del", show.QuoteDel)
 	// 标的信息
