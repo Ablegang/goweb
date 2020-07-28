@@ -5,6 +5,7 @@ package app
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"goweb/app/cron"
 	"goweb/app/models"
 
 	// 环境变量提前载入，要比框架更早
@@ -34,7 +35,7 @@ func init() {
 // 框架启动
 func Start() {
 	// 启动 cron 进程
-	go startCron()
+	go cron.Start()
 
 	port := os.Getenv("PORT")
 	err := r.Run(port)

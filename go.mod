@@ -16,6 +16,7 @@ require (
 	github.com/mattn/go-isatty v0.0.12
 	github.com/pilu/config v0.0.0-20131214182432-3eb99e6c0b9a // indirect
 	github.com/pilu/fresh v0.0.0-20190826141211-0fa698148017 // indirect
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.6.0
 	golang.org/x/sys v0.0.0-20200223170610-d5e6a3e2c0ae
 	gopkg.in/go-playground/validator.v9 v9.31.0
