@@ -1,7 +1,6 @@
 package cron
 
 import (
-	"fmt"
 	"github.com/robfig/cron/v3"
 	"goweb/app/cron/jobs"
 )
@@ -9,22 +8,30 @@ import (
 // 所有计时任务在这注册
 func commands() []JobCommands {
 	return []JobCommands{
-		&jobs.QuoteNotice{},
+		&jobs.QuoteZdNotice{},
+		&jobs.QuoteCommonNotice{},
+		&jobs.QuoteNearCloseNotice{},
+		&jobs.QuoteNearOpenNotice{},
 	}
 }
 
+// 计时任务启动
 func Start() {
 	// 使支持秒级别
 	c := cron.New(cron.WithSeconds())
-	for _, job := range commands() {
-		fmt.Println(job.GetName(), "脚本开始执行")
-		_, _ = c.AddFunc(job.GetTime(), job.GetHandler())
+	commands := commands()
+	for _, job := range commands {
+		times := job.GetTime()
+		for _, time := range times {
+			_, _ = c.AddFunc(time, job.GetHandler())
+		}
 	}
 	c.Start()
 }
 
+// 计时任务接口
 type JobCommands interface {
-	GetTime() string
+	GetTime() []string
 	GetName() string
 	GetHandler() func()
 }

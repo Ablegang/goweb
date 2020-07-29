@@ -11,77 +11,7 @@ import (
 	"time"
 )
 
-var (
-	// 通用配置
-	AtMobile    = os.Getenv("AT_MOBILE")
-	Quotes      = os.Getenv("QUOTES")
-	RobotToken  = os.Getenv("QUOTES_DING_ACCESS_TOKEN")
-	CommonTitle = "行情播报"
-	SpiderApi   = "http://api.money.126.net/data/feed/"
-)
 
-// 自选通知
-func ListenQuotesCommonPush() {
-	var (
-		TikeDua      = 15 * time.Minute
-		TemplateHead = "# 监控：\n @" + AtMobile + "\n"
-		TemplateBody = "- %s 涨跌幅：%s%% 现价：%s\n"
-	)
-
-	tick := time.NewTicker(TikeDua)
-	for true {
-		// 取数据
-		u := GetQuotes(Quotes)
-		if len(u) == 0 {
-			<-tick.C
-			continue
-		}
-
-		md := TemplateHead
-		for _, v := range u {
-			// 解析数据
-			name, _, percentStr, _, nowStr := FormatQuotesCoreData(v)
-			md += fmt.Sprintf(TemplateBody, name, percentStr, nowStr)
-		}
-
-		dingrobot.Markdown(&dingrobot.MarkdownParams{
-			Ac:      RobotToken,
-			Md:      md,
-			Title:   CommonTitle,
-			At:      []string{AtMobile},
-			IsAtAll: false,
-		})
-
-		<-tick.C
-	}
-}
-
-// 收盘前通知
-func NearCloseNotice() {
-	// 每分钟
-	tick := time.NewTicker(time.Minute)
-	for true {
-		now := time.Now()
-		if now.Weekday() == time.Saturday || now.Weekday() == time.Sunday {
-			<-tick.C
-			continue
-		}
-		if now.Hour() != 14 || now.Minute() != 54 {
-			<-tick.C
-			continue
-		}
-
-		dingrobot.Markdown(&dingrobot.MarkdownParams{
-			Ac:      RobotToken,
-			Md:      "# 临近收盘，特此提醒，抓紧操作 \n @所有人",
-			Title:   CommonTitle,
-			At:      []string{},
-			IsAtAll: true,
-		})
-
-		<-tick.C
-	}
-}
 
 // 开盘前通知
 func NearOpenNotice() {

@@ -3,39 +3,39 @@ package jobs
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"goweb/app/cron"
 	"goweb/app/models"
 	"goweb/app/models/show"
 	"goweb/pkg/dingrobot"
 	"goweb/pkg/quotes"
 	"math"
-	"os"
 	"time"
 )
 
-type QuoteNotice struct {
+type QuoteZdNotice struct {
 }
 
-func (job *QuoteNotice) GetName() string {
-	return "涨跌幅提醒，每波动一个百分点都会通知"
+func (job *QuoteZdNotice) GetName() string {
+	return "涨跌幅提醒"
 }
 
-func (job *QuoteNotice) GetTime() string {
-	return "*/5 * * * * ?"
+func (job *QuoteZdNotice) GetTime() []string {
+	return []string{
+		"*/5 30-59 9,11 * * mon-fri",
+		"*/5 * 10,13,14 * * mon-fri",
+	}
 }
 
-func (job *QuoteNotice) GetHandler() func() {
+func (job *QuoteZdNotice) GetHandler() func() {
+
 	var (
-		// 通用配置
-		AtMobile    = os.Getenv("AT_MOBILE")
-		RobotToken  = os.Getenv("QUOTES_DING_ACCESS_TOKEN")
-		CommonTitle = "涨跌幅通知"
 		ZTemplate   = "%s \n - 涨幅 %s%% 现价：%s \n @%s"
 		DTemplate   = "%s \n - 跌幅 %s%% 现价：%s \n @%s"
 	)
 
 	return func() {
 		driver := quotes.New(quotes.WyResource)
-		driver.SetKeys(job.getKeys())
+		driver.SetKeys(cron.GetKeys())
 		data, err := driver.GetQuotes()
 		if err != nil {
 			logrus.Errorln(err)
@@ -43,17 +43,16 @@ func (job *QuoteNotice) GetHandler() func() {
 		}
 
 		needToNotice := job.getNeeds(data)
-		fmt.Println(needToNotice)
 		for _, n := range needToNotice {
 			template := ZTemplate
 			if n.Percent < 0 {
 				template = DTemplate
 			}
 			go dingrobot.Markdown(&dingrobot.MarkdownParams{
-				Ac:      RobotToken,
-				Md:      fmt.Sprintf(template, n.Name, n.PercentStr, n.NowPriceStr, AtMobile),
-				Title:   CommonTitle,
-				At:      []string{AtMobile},
+				Ac:      cron.RobotToken,
+				Md:      fmt.Sprintf(template, n.Name, n.PercentStr, n.NowPriceStr, cron.AtMobile),
+				Title:   job.GetName(),
+				At:      []string{cron.AtMobile},
 				IsAtAll: false,
 			})
 			_, _ = models.Show().Insert(&show.Notice{
@@ -65,15 +64,8 @@ func (job *QuoteNotice) GetHandler() func() {
 	}
 }
 
-// 取数据库的 keys
-func (job *QuoteNotice) getKeys() (keys []string) {
-	model := show.Quote{}
-	_ = models.Show().Table(model.TableName()).Cols("key").Find(&keys)
-	return
-}
-
 // 取需要通知的 quote
-func (job *QuoteNotice) getNeeds(data []quotes.QuoteData) (res []quotes.QuoteData) {
+func (job *QuoteZdNotice) getNeeds(data []quotes.QuoteData) (res []quotes.QuoteData) {
 	qs := make([]show.Notice, 0)
 	_ = models.Show().Where("created_at > ?", time.Now().Format("2006-01-02")).Find(&qs)
 	fmt.Println(qs)
@@ -91,7 +83,7 @@ func (job *QuoteNotice) getNeeds(data []quotes.QuoteData) (res []quotes.QuoteDat
 }
 
 // 在今日所有通知里取出某标的最后的一条通知
-func (job *QuoteNotice) getLastNotice(qs []show.Notice, d quotes.QuoteData) (last show.Notice) {
+func (job *QuoteZdNotice) getLastNotice(qs []show.Notice, d quotes.QuoteData) (last show.Notice) {
 	// 遍历所有今日的 notice
 	for _, q := range qs {
 		// 如果是同一标的
