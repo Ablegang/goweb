@@ -1,7 +1,6 @@
 package jobs
 
 import (
-	"goweb/app/cron"
 	"goweb/pkg/dingrobot"
 )
 
@@ -21,7 +20,7 @@ func (job *QuoteNearCloseNotice) GetTime() []string {
 func (job *QuoteNearCloseNotice) GetHandler() func() {
 	return func() {
 		dingrobot.Markdown(&dingrobot.MarkdownParams{
-			Ac:      cron.RobotToken,
+			Ac:      GetRobotToken(),
 			Md:      "# 临近收盘，特此提醒，抓紧操作 \n @所有人",
 			Title:   job.GetName(),
 			At:      []string{},

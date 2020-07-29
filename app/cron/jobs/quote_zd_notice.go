@@ -3,7 +3,6 @@ package jobs
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"goweb/app/cron"
 	"goweb/app/models"
 	"goweb/app/models/show"
 	"goweb/pkg/dingrobot"
@@ -35,7 +34,7 @@ func (job *QuoteZdNotice) GetHandler() func() {
 
 	return func() {
 		driver := quotes.New(quotes.WyResource)
-		driver.SetKeys(cron.GetKeys())
+		driver.SetKeys(GetKeys())
 		data, err := driver.GetQuotes()
 		if err != nil {
 			logrus.Errorln(err)
@@ -48,11 +47,11 @@ func (job *QuoteZdNotice) GetHandler() func() {
 			if n.Percent < 0 {
 				template = DTemplate
 			}
-			go dingrobot.Markdown(&dingrobot.MarkdownParams{
-				Ac:      cron.RobotToken,
-				Md:      fmt.Sprintf(template, n.Name, n.PercentStr, n.NowPriceStr, cron.AtMobile),
+			dingrobot.Markdown(&dingrobot.MarkdownParams{
+				Ac:      GetRobotToken(),
+				Md:      fmt.Sprintf(template, n.Name, n.PercentStr, n.NowPriceStr, GetAtMobile()),
 				Title:   job.GetName(),
-				At:      []string{cron.AtMobile},
+				At:      []string{GetAtMobile()},
 				IsAtAll: false,
 			})
 			_, _ = models.Show().Insert(&show.Notice{
@@ -68,7 +67,6 @@ func (job *QuoteZdNotice) GetHandler() func() {
 func (job *QuoteZdNotice) getNeeds(data []quotes.QuoteData) (res []quotes.QuoteData) {
 	qs := make([]show.Notice, 0)
 	_ = models.Show().Where("created_at > ?", time.Now().Format("2006-01-02")).Find(&qs)
-	fmt.Println(qs)
 	// 遍历所有标的
 	for _, d := range data {
 		last := job.getLastNotice(qs, d)

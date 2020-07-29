@@ -3,7 +3,6 @@ package jobs
 import (
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"goweb/app/cron"
 	"goweb/pkg/dingrobot"
 	"goweb/pkg/quotes"
 )
@@ -26,13 +25,13 @@ func (job *QuoteCommonNotice) GetTime() []string {
 func (job *QuoteCommonNotice) GetHandler() func() {
 
 	var (
-		TemplateHead = "# 监控：\n @" + cron.AtMobile + "\n"
+		TemplateHead = "# 监控：\n @" + GetAtMobile() + "\n"
 		TemplateBody = "- %s 涨跌幅：%s%% 现价：%s\n"
 	)
 
 	return func() {
 		driver := quotes.New(quotes.WyResource)
-		driver.SetKeys(cron.GetKeys())
+		driver.SetKeys(GetKeys())
 		data, err := driver.GetQuotes()
 		if err != nil {
 			logrus.Errorln(err)
@@ -46,10 +45,10 @@ func (job *QuoteCommonNotice) GetHandler() func() {
 		}
 
 		dingrobot.Markdown(&dingrobot.MarkdownParams{
-			Ac:      cron.RobotToken,
+			Ac:      GetRobotToken(),
 			Md:      md,
 			Title:   job.GetName(),
-			At:      []string{cron.AtMobile},
+			At:      []string{GetAtMobile()},
 			IsAtAll: false,
 		})
 	}
