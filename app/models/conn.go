@@ -20,6 +20,7 @@ var (
 		"show": []interface{}{
 			&show.Admin{},
 			&show.Quote{},
+			&show.Notice{},
 		},
 	}
 )

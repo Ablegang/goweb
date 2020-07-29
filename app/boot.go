@@ -35,7 +35,8 @@ func init() {
 // 框架启动
 func Start() {
 	// 启动 cron 进程
-	go cron.Start()
+	// cron 包本身会在 goroutine 里运行，本身已经是异步
+	cron.Start()
 
 	port := os.Getenv("PORT")
 	err := r.Run(port)

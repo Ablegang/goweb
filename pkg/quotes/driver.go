@@ -20,6 +20,7 @@ type QuoteData struct {
 	Number      string
 	NowPrice    float64
 	NowPriceStr string
+	Key         string
 }
 
 // 驱动接口
@@ -101,6 +102,7 @@ func (d *WyDriver) GetQuotes() ([]QuoteData, error) {
 		quote.Number, _ = u[k]["symbol"].(string)
 		quote.NowPrice, _ = u[k]["price"].(float64)
 		quote.NowPriceStr = strconv.FormatFloat(quote.NowPrice, 'f', 2, 64)
+		quote.Key = k
 		quotes = append(quotes, quote)
 	}
 
