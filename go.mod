@@ -3,6 +3,7 @@ module goweb
 go 1.14
 
 require (
+	github.com/chenhg5/collection v0.0.0-20191118032303-cb21bccce4c3
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-playground/locales v0.13.0

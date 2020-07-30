@@ -12,6 +12,7 @@ func commands() []JobCommands {
 		&jobs.QuoteCommonNotice{},
 		&jobs.QuoteNearCloseNotice{},
 		&jobs.QuoteNearOpenNotice{},
+		&jobs.QuoteDailyIncomeNotice{},
 	}
 }
 

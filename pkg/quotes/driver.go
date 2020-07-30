@@ -33,6 +33,8 @@ type Driver interface {
 	GetName() string
 	// 获取标的数据
 	GetQuotes() ([]QuoteData, error)
+	// 整理为 map 格式
+	GetMap() (map[string]QuoteData, error)
 }
 
 // 工厂
@@ -107,4 +109,19 @@ func (d *WyDriver) GetQuotes() ([]QuoteData, error) {
 	}
 
 	return quotes, nil
+}
+
+func (d *WyDriver) GetMap() (map[string]QuoteData, error) {
+	qList, err := d.GetQuotes()
+	if err != nil {
+		return nil, err
+	}
+
+	// 整理为 map 格式
+	qMap := make(map[string]QuoteData)
+	for _, q := range qList {
+		qMap[q.Key] = q
+	}
+
+	return qMap, nil
 }
