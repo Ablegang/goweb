@@ -28,8 +28,8 @@ func (job *QuoteZdNotice) GetTime() []string {
 func (job *QuoteZdNotice) GetHandler() func() {
 
 	var (
-		ZTemplate   = "%s \n - 涨幅 %s%% 现价：%s \n @%s"
-		DTemplate   = "%s \n - 跌幅 %s%% 现价：%s \n @%s"
+		ZTemplate = "%s \n - 涨幅 %s% 现价：%s \n @%s"
+		DTemplate = "%s \n - 跌幅 %s% 现价：%s \n @%s"
 	)
 
 	return func() {
@@ -70,14 +70,30 @@ func (job *QuoteZdNotice) getNeeds(data []quotes.QuoteData) (res []quotes.QuoteD
 	// 遍历所有标的
 	for _, d := range data {
 		last := job.getLastNotice(qs, d)
-		// 取百分点
-		per := int64(math.Floor(d.Percent * 100))
+		per := job.getPerFlag(d)
 		if per != last.Per {
 			res = append(res, d)
 		}
 	}
 
 	return
+}
+
+// 获取百分点标志位
+func (job *QuoteZdNotice) getPerFlag(d quotes.QuoteData) int64 {
+	// 取百分点
+	var per int64
+	if d.Percent > -0.005 && d.Percent < 0.005 {
+		// -0.5% 到 0.5% 之间只需通知一次
+		per = 0
+	} else if d.Percent < 0 {
+		// -0.5% 之后，每波动 1% 都将通知
+		per = int64(math.Floor(d.Percent * 100))
+	} else {
+		// 5% 之后，每波动 1% 都将通知
+		per = int64(math.Ceil(d.Percent * 100))
+	}
+	return per
 }
 
 // 在今日所有通知里取出某标的最后的一条通知
