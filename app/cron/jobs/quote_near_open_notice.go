@@ -13,7 +13,7 @@ func (job *QuoteNearOpenNotice) GetName() string {
 
 func (job *QuoteNearOpenNotice) GetTime() []string {
 	return []string{
-		"* 28 9 * * mon-fri",
+		"1 28 9 * * mon-fri",
 	}
 }
 

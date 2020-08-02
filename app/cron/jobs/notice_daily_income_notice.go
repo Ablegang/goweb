@@ -20,7 +20,7 @@ func (job *QuoteDailyIncomeNotice) GetName() string {
 
 func (job *QuoteDailyIncomeNotice) GetTime() []string {
 	return []string{
-		"* 01 15 * * mon-fri",
+		"1 01 15 * * mon-fri",
 	}
 }
 
