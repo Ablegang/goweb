@@ -22,6 +22,10 @@ type LoginForm struct {
 
 // 登录处理
 func Login(c *gin.Context) {
+
+	// 预防爆破
+	time.Sleep(3 * time.Second)
+
 	// 入参
 	req := &LoginForm{}
 	if err := request.Bind(c, req); err != nil {
