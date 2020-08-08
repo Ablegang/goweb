@@ -22,11 +22,11 @@ func registerRoute(r *gin.Engine) {
 // 博客路由
 func blogRouter(r *gin.RouterGroup) {
 	// 分类列表
-	r.GET("ls", blog.Ls)
+	r.Any("ls", blog.Ls)
 	// 文章列表
-	r.GET("posts", blog.Posts)
+	r.Any("posts", blog.Posts)
 	// 文章内容
-	r.GET("posts.detail", blog.PostsDetail)
+	r.Any("posts.detail", blog.PostsDetail)
 	// CI
 	r.POST("ci", blog.CI)
 }

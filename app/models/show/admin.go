@@ -1,6 +1,8 @@
 package show
 
-import "time"
+import (
+	"goweb/pkg/helper"
+)
 
 type Admin struct {
 	Id          int64
@@ -9,9 +11,9 @@ type Admin struct {
 	Phone       string `xorm:"unique"`
 	Salt        string
 	Pwd         string `xorm:"varchar(200)"`
-	LastLoginAt time.Time
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	LastLoginAt helper.JsonTime
+	CreatedAt   helper.JsonTime
+	UpdatedAt   helper.JsonTime
 }
 
 func (admin *Admin) TableName() string {

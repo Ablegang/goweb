@@ -55,7 +55,7 @@ func Login(c *gin.Context) {
 	token, _ := passport.NewJwt().CreateToken(*cl)
 
 	// 更新登录时间
-	admin.LastLoginAt = time.Now()
+	admin.LastLoginAt = helper.JsonTime(time.Now())
 	_, err := models.Show().ID(admin.Id).Cols("last_login_at").Update(admin)
 	if err != nil {
 		logrus.Errorln("数据库更新失败", err)
@@ -101,9 +101,9 @@ func AddAdmin(c *gin.Context) {
 		Phone:       req.Phone,
 		Salt:        salt,
 		Pwd:         passport.Pwd(req.Pwd, salt),
-		LastLoginAt: time.Now(),
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		LastLoginAt: helper.JsonTime(time.Now()),
+		CreatedAt:   helper.JsonTime(time.Now()),
+		UpdatedAt:   helper.JsonTime(time.Now()),
 	})
 	if err != nil {
 		resp.FailJson(c, gin.H{}, -1, err.Error())

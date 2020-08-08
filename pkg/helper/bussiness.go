@@ -8,6 +8,7 @@ import (
 	"goweb/pkg/hot"
 	"io/ioutil"
 	"strings"
+	"time"
 )
 
 // 通用分页表单参数
@@ -70,4 +71,11 @@ func FormatPath(path, except string) string {
 		return ""
 	}
 	return string(s[0 : len(s)-1])
+}
+
+// 时间格式
+type JsonTime time.Time
+
+func (j JsonTime) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + time.Time(j).Format("2006-01-02 15:04:05") + `"`), nil
 }

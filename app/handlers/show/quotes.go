@@ -94,8 +94,8 @@ func QuoteAdd(c *gin.Context) {
 		AddReason:    req.Reason,
 		OffReason:    "",
 		Status:       DisplayState,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		CreatedAt:    helper.JsonTime(time.Now()),
+		UpdatedAt:    helper.JsonTime(time.Now()),
 	})
 	if err != nil {
 		resp.FailJson(c, gin.H{}, -1, err.Error())
@@ -172,9 +172,23 @@ func QuoteList(c *gin.Context) {
 	}
 
 	list := make([]show.Quote, 0)
-	query := models.Show().Where("name like '%?%'", req.Keyword).Or("number like '%?%'", req.Keyword)
-	total, _ := query.Count(new(show.Quote))
-	err := query.Limit(req.Limit, (req.Page-1)*req.Limit).Find(&list)
+
+	// 状态筛选，默认为展示中
+	status := DisplayState
+	if len(c.Param("status")) > 0 {
+		status = c.Param("status")
+	}
+	query := models.Show().Where("status = ?", status)
+
+	// 关键词筛选
+	if len(req.Keyword) > 0 {
+		query = query.Where("name like '%?%'", req.Keyword).Or("number like '%?%'", req.Keyword)
+	}
+
+	// 总数
+	total, _ := query.Count(&show.Quote{})
+
+	err := query.OrderBy("created_at desc").Limit(req.Limit, (req.Page-1)*req.Limit).Find(&list)
 	if err != nil {
 		resp.FailJson(c, gin.H{}, -1, err.Error())
 		return

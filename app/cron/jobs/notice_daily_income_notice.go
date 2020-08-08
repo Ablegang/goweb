@@ -50,9 +50,11 @@ func (job *QuoteDailyIncomeNotice) GetHandler() func() {
 		md := TemplateHead
 		for _, q := range qs {
 			q.TodayPrice = qMap[q.Key].NowPrice
-			// 更新当日价格
-			_, _ = models.Show().Update(&q)
 			sy := (q.TodayPrice - q.InitialPrice) / q.InitialPrice * 100
+			q.Syl = sy
+			// 更新当日价格及收益率
+			_, _ = models.Show().Update(&q)
+
 			md += fmt.Sprintf(TemplateBody, q.Name, q.InitialPrice, q.TodayPrice, sy)
 		}
 

@@ -1,6 +1,8 @@
 package show
 
-import "time"
+import (
+	"goweb/pkg/helper"
+)
 
 type Quote struct {
 	Id           int64
@@ -9,11 +11,12 @@ type Quote struct {
 	Key          string  `xorm:"char(7) notnull comment('标识')"`
 	InitialPrice float64 `xorm:"notnull comment('初选价')"`
 	TodayPrice   float64 `xorm:"notnull comment('今日价')"`
+	Syl          float64 `xorm:"notnull default 0 comment('入选至今收益率')"`
 	AddReason    string  `xorm:"varchar(255) notnull comment('入选理由')"`
 	OffReason    string  `xorm:"varchar(255) notnull comment('下架理由')"`
 	Status       string  `xorm:"char(10) notnull comment('状态')"`
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	CreatedAt    helper.JsonTime
+	UpdatedAt    helper.JsonTime
 }
 
 func (quotes *Quote) TableName() string {

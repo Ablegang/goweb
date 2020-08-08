@@ -6,6 +6,7 @@ import (
 	"goweb/app/models"
 	"goweb/app/models/show"
 	"goweb/pkg/dingrobot"
+	"goweb/pkg/helper"
 	"goweb/pkg/quotes"
 	"math"
 	"time"
@@ -58,7 +59,7 @@ func (job *QuoteZdNotice) GetHandler() func() {
 			_, _ = models.Show().Insert(&show.Notice{
 				Key:       n.Key,
 				Per:       int64(math.Floor(n.Percent * 100)),
-				CreatedAt: time.Now(),
+				CreatedAt: helper.JsonTime(time.Now()),
 			})
 		}
 	}
@@ -107,7 +108,7 @@ func (job *QuoteZdNotice) getLastNotice(qs []show.Notice, d quotes.QuoteData) (l
 			if &last == nil {
 				last = q
 			} else {
-				if q.CreatedAt.After(last.CreatedAt) {
+				if time.Time(q.CreatedAt).After(time.Time(last.CreatedAt)) {
 					last = q
 				}
 			}
