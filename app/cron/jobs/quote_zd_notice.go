@@ -20,7 +20,8 @@ func (job *QuoteZdNotice) GetName() string {
 
 func (job *QuoteZdNotice) GetTime() []string {
 	return []string{
-		"*/5 30-59 9,11 * * mon-fri",
+		"*/5 30-59 9 * * mon-fri",
+		"*/5 0-30 11 * * mon-fri",
 		"*/5 * 10,13,14 * * mon-fri",
 	}
 }
@@ -28,8 +29,8 @@ func (job *QuoteZdNotice) GetTime() []string {
 func (job *QuoteZdNotice) GetHandler() func() {
 
 	var (
-		ZTemplate = "%s \n - 涨幅 %s% 现价：%s \n @%s"
-		DTemplate = "%s \n - 跌幅 %s% 现价：%s \n @%s"
+		ZTemplate = "%s \n - 涨幅 %s 现价：%s \n @%s"
+		DTemplate = "%s \n - 跌幅 %s 现价：%s \n @%s"
 	)
 
 	return func() {
@@ -66,7 +67,7 @@ func (job *QuoteZdNotice) GetHandler() func() {
 // 取需要通知的 quote
 func (job *QuoteZdNotice) getNeeds(data []quotes.QuoteData) (res []quotes.QuoteData) {
 	qs := make([]show.Notice, 0)
-	_ = models.Show().Where("created_at > ?", time.Now().Format("2006-01-02")).Find(&qs)
+	_ = models.Show().Where("created_at > ?", time.Now()).Find(&qs)
 	// 遍历所有标的
 	for _, d := range data {
 		last := job.getLastNotice(qs, d)
@@ -90,7 +91,7 @@ func (job *QuoteZdNotice) getPerFlag(d quotes.QuoteData) int64 {
 		// -0.5% 之后，每波动 1% 都将通知
 		per = int64(math.Floor(d.Percent * 100))
 	} else {
-		// 5% 之后，每波动 1% 都将通知
+		// 0.5% 之后，每波动 1% 都将通知
 		per = int64(math.Ceil(d.Percent * 100))
 	}
 	return per
