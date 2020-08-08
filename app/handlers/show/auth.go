@@ -114,3 +114,8 @@ func AddAdmin(c *gin.Context) {
 	resp.SuccessJson(c, gin.H{})
 	return
 }
+
+// 用户信息
+func UserInfo(c *gin.Context) {
+
+}

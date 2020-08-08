@@ -38,6 +38,10 @@ func showRouter(r *gin.RouterGroup) {
 
 	auth := r.Use(passport.JwtAuth())
 
+	// 权限，超管、VIP 等角色中间件设计
+
+	// 用户信息
+	auth.Any("user.info", show.UserInfo)
 	// 添加账号
 	auth.Any("admin.add", show.AddAdmin)
 	// 添加标的

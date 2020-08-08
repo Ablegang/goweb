@@ -109,7 +109,7 @@ func JwtAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if len(token) <= 25 {
-			resp.FailJson(c, "请先登录！", -7)
+			resp.FailJson(c, gin.H{}, -7, "请先登录！")
 			c.Abort()
 			return
 		}
@@ -118,7 +118,7 @@ func JwtAuth() gin.HandlerFunc {
 		j := NewJwt()
 		claims, err := j.ParseToken(token)
 		if err != nil {
-			resp.FailJson(c, err.Error())
+			resp.FailJson(c, gin.H{}, -7, err.Error())
 			c.Abort()
 			return
 		}
