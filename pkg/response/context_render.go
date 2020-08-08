@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"goweb/pkg/helper"
 	"goweb/pkg/hot"
+	"strings"
 	"time"
 )
 
@@ -47,7 +48,7 @@ func SuccessJson(c *gin.Context, g interface{}) {
 	JSON(c, 200, gin.H{
 		"code":         DefaultSuccessCode,
 		"msg":          DefaultSuccessMsg,
-		"api":          c.Request.Host + c.Request.URL.Path + "?" + c.Request.URL.RawQuery,
+		"api":          strings.TrimRight(c.Request.Host+c.Request.URL.Path+"?"+c.Request.URL.RawQuery, "?"),
 		"responseTime": time.Now().Format(hot.GetTimeCommonFormat()),
 		"data":         g,
 	})
@@ -68,7 +69,7 @@ func FailJson(c *gin.Context, g interface{}, values ...interface{}) {
 	JSON(c, 400, gin.H{
 		"code":         code,
 		"msg":          msg,
-		"api":          c.Request.Host + c.Request.URL.Path + "?" + c.Request.URL.RawQuery,
+		"api":          strings.TrimRight(c.Request.Host+c.Request.URL.Path+"?"+c.Request.URL.RawQuery, "?"),
 		"responseTime": time.Now().Format(hot.GetTimeCommonFormat()),
 		"data":         g,
 	})
