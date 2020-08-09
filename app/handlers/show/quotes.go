@@ -132,7 +132,7 @@ func QuoteDel(c *gin.Context) {
 	}
 
 	// 删除数据
-	res, _ := models.Show().Delete(&quote)
+	res, _ := models.Show().ID(quote.Id).Delete(&quote)
 	if res <= 0 {
 		resp.FailJson(c, gin.H{}, -1, "删除失败")
 		return
@@ -179,16 +179,18 @@ func QuoteList(c *gin.Context) {
 		status = c.Param("status")
 	}
 	query := models.Show().Where("status = ?", status)
+	query2 := models.Show().Where("status = ?", status)
 
 	// 关键词筛选
 	if len(req.Keyword) > 0 {
 		query = query.Where("name like '%?%'", req.Keyword).Or("number like '%?%'", req.Keyword)
+		query2 = query.Where("name like '%?%'", req.Keyword).Or("number like '%?%'", req.Keyword)
 	}
 
 	// 总数
 	total, _ := query.Count(&show.Quote{})
 
-	err := query.OrderBy("created_at desc").Limit(req.Limit, (req.Page-1)*req.Limit).Find(&list)
+	err := query2.OrderBy("created_at desc").Limit(req.Limit, (req.Page-1)*req.Limit).Find(&list)
 	if err != nil {
 		resp.FailJson(c, gin.H{}, -1, err.Error())
 		return
@@ -219,11 +221,14 @@ func QuoteOff(c *gin.Context) {
 	// 下架
 	quote.Status = OffState
 	quote.OffReason = req.Reason
-	res, _ := models.Show().Update(&quote)
+	// 必须指定 ID
+	res, _ := models.Show().ID(quote.Id).Update(&quote)
 	if res <= 0 {
 		resp.FailJson(c, gin.H{}, -1, "下架失败")
 		return
 	}
+
+	// TODO:下架要有通知
 
 	resp.SuccessJson(c, gin.H{})
 }

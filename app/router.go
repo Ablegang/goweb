@@ -36,27 +36,32 @@ func showRouter(r *gin.RouterGroup) {
 	// 登录
 	r.Any("login", show.Login)
 
-	// 登录用户
-	auth := r.Use(passport.JwtAuth())
-	// vip 用户
-	vip := auth.Use(Vip())
-	// 超管用户
-	superAdmin := auth.Use(SuperAdmin())
+	// 登录组
+	auth := r.Group("").Use(passport.JwtAuth())
+	{
+		// 用户信息
+		auth.Any("user.info", show.UserInfo)
+	}
 
-	// 用户信息
-	auth.Any("user.info", show.UserInfo)
+	// vip 组
+	vip := r.Group("").Use(passport.JwtAuth(), Vip())
+	{
+		// 标的列表（观察中、往期）
+		vip.Any("quote.ls", show.QuoteList)
+	}
 
-	// 标的列表（观察中、往期）
-	vip.Any("quote.ls", show.QuoteList)
-
-	// 添加账号
-	superAdmin.Any("user.add", show.AddUser)
-	// 添加标的
-	superAdmin.Any("quote.add", show.QuoteAdd)
-	// 删除标的
-	superAdmin.Any("quote.del", show.QuoteDel)
-	// 标的信息
-	superAdmin.Any("quote.info", show.QuoteInfo)
-	// 下架标的
-	superAdmin.Any("quote.off", show.QuoteOff)
+	// 超管组
+	superAdmin := r.Group("").Use(passport.JwtAuth(), SuperAdmin())
+	{
+		// 添加账号
+		superAdmin.Any("user.add", show.AddUser)
+		// 添加标的
+		superAdmin.Any("quote.add", show.QuoteAdd)
+		// 删除标的
+		superAdmin.Any("quote.del", show.QuoteDel)
+		// 标的信息
+		superAdmin.Any("quote.info", show.QuoteInfo)
+		// 下架标的
+		superAdmin.Any("quote.off", show.QuoteOff)
+	}
 }
