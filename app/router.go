@@ -13,10 +13,10 @@ func registerRoute(r *gin.Engine) {
 	r.Use(Cors())
 
 	// blog
-	blogRouter(r.Group("blog"))
+	blogRouter(r.Group("api/blog"))
 
 	// show
-	showRouter(r.Group("show"))
+	showRouter(r.Group("api/show"))
 }
 
 // 博客路由
