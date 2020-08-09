@@ -4,7 +4,10 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	"goweb/app/models"
+	"goweb/app/models/show"
 	"goweb/pkg/hot"
+	"goweb/pkg/response"
 	"net/http"
 )
 
@@ -36,4 +39,41 @@ func Cors() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+// 会员过滤
+func Vip() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 超管拥有所有权限
+		CheckRole(c, []int64{show.ADMIN, show.VIP}, -2, "您不是 vip")
+	}
+}
+
+// 超管过滤
+func SuperAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		CheckRole(c, []int64{show.ADMIN}, -3, "您不是超管")
+	}
+}
+
+// 检查用户组
+func CheckRole(c *gin.Context, roleIds []int64, code int, msg string) {
+	userI, _ := c.Get("AuthUser")
+	if userI == nil {
+		response.FailJson(c, gin.H{}, code, msg)
+		c.Abort()
+		return
+	}
+	user, _ := userI.(map[string]interface{})
+
+	query := models.Show().Where("user_id = ?", user["Id"])
+	total, err := query.In("role_id", roleIds).Count(&show.UserRole{})
+
+	if err != nil || total <= 0 {
+		response.FailJson(c, gin.H{}, code, msg)
+		c.Abort()
+		return
+	}
+
+	c.Next()
 }

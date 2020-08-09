@@ -36,22 +36,27 @@ func showRouter(r *gin.RouterGroup) {
 	// 登录
 	r.Any("login", show.Login)
 
+	// 登录用户
 	auth := r.Use(passport.JwtAuth())
-
-	// 权限，超管、VIP 等角色中间件设计
+	// vip 用户
+	vip := auth.Use(Vip())
+	// 超管用户
+	superAdmin := auth.Use(SuperAdmin())
 
 	// 用户信息
 	auth.Any("user.info", show.UserInfo)
-	// 添加账号
-	auth.Any("admin.add", show.AddAdmin)
-	// 添加标的
-	auth.Any("quote.add", show.QuoteAdd)
-	// 删除标的
-	auth.Any("quote.del", show.QuoteDel)
-	// 标的信息
-	auth.Any("quote.info", show.QuoteInfo)
+
 	// 标的列表（观察中、往期）
-	auth.Any("quote.ls", show.QuoteList)
+	vip.Any("quote.ls", show.QuoteList)
+
+	// 添加账号
+	superAdmin.Any("user.add", show.AddUser)
+	// 添加标的
+	superAdmin.Any("quote.add", show.QuoteAdd)
+	// 删除标的
+	superAdmin.Any("quote.del", show.QuoteDel)
+	// 标的信息
+	superAdmin.Any("quote.info", show.QuoteInfo)
 	// 下架标的
-	auth.Any("quote.off", show.QuoteOff)
+	superAdmin.Any("quote.off", show.QuoteOff)
 }

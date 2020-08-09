@@ -124,7 +124,7 @@ func JwtAuth() gin.HandlerFunc {
 		}
 
 		// 往 context 植入当前登录用户
-		c.Set("AuthUser", claims)
+		c.Set("AuthUser", claims.Content)
 
 		c.Next()
 	}

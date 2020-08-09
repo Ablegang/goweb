@@ -133,3 +133,9 @@ gin.Context.Get("RequestId") 即可在其他 Handlers 中获取
 
 # passport 包
 使用 jwt 作为登录验证
+
+# code
+-1 通用
+-2 非vip
+-3 非超管
+-7 未登录

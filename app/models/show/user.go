@@ -4,7 +4,7 @@ import (
 	"goweb/pkg/helper"
 )
 
-type Admin struct {
+type User struct {
 	Id          int64
 	Name        string `xorm:"index"`
 	Email       string `xorm:"unique"`
@@ -16,6 +16,6 @@ type Admin struct {
 	UpdatedAt   helper.JsonTime
 }
 
-func (admin *Admin) TableName() string {
-	return "admins"
+func (user *User) TableName() string {
+	return "users"
 }

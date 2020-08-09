@@ -18,9 +18,11 @@ var (
 	Tables = map[string][]interface{}{
 		// show 的表
 		"show": []interface{}{
-			&show.Admin{},
+			&show.User{},
 			&show.Quote{},
 			&show.Notice{},
+			&show.Role{},
+			&show.UserRole{},
 		},
 	}
 )
