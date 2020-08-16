@@ -33,7 +33,6 @@ func CI(c *gin.Context) {
 	rootDir, _ := helper.GetBlogRoot()
 	shell := "cd " + "./" + rootDir
 	shell += "&& git pull origin master"
-	shell += "&& vuepress build ."
 	cmd := exec.Command("/bin/sh", "-c", shell)
 	_, _ = cmd.Output()
 
