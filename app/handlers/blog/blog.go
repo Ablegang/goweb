@@ -6,15 +6,17 @@ import (
 	"gopkg.in/go-playground/webhooks.v5/github"
 	"goweb/pkg/dingrobot"
 	"goweb/pkg/helper"
+	"io/ioutil"
 	"os"
 	"os/exec"
 )
 
 // CI
 func CI(c *gin.Context) {
+	data, _ := ioutil.ReadAll(c.Request.Body)
 	c.JSON(200, gin.H{
 		"token":   c.Request.Header.Get("X-Gitee-Token"),
-		"payload": c.Request.PostForm,
+		"payload": string(data),
 	})
 	return
 
