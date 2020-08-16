@@ -12,8 +12,10 @@ import (
 
 // CI
 func CI(c *gin.Context) {
-	c.JSON(200, c.Request)
-	c.Abort()
+	c.JSON(200, gin.H{
+		"token":   c.Request.Header.Get("X-Gitee-Token"),
+		"payload": c.Request.PostForm,
+	})
 	return
 
 	// hook 校验
