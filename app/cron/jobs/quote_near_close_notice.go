@@ -24,7 +24,7 @@ func (job *QuoteNearCloseNotice) GetHandler() func() {
 			Md:      "# 临近收盘，特此提醒，抓紧操作 \n @所有人",
 			Title:   job.GetName(),
 			At:      []string{},
-			IsAtAll: true,
+			IsAtAll: false,
 		})
 	}
 }

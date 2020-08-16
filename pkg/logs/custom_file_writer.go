@@ -76,7 +76,7 @@ func (writer *CustomFileWriter) Write(p []byte) (n int, err error) {
 			Md:      "# PROD Recover 告警：\n" + "```text\n" + string(p) + "\n```",
 			Title:   "监控告警",
 			At:      []string{"15868100475"},
-			IsAtAll: true,
+			IsAtAll: false,
 		})
 	}
 

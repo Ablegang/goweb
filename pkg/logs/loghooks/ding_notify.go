@@ -49,7 +49,7 @@ func (e *dingNotify) Fire(entry *logrus.Entry) error {
 		Md:      "# PROD Custom 告警：\n" + "```json\n" + string(b) + "\n```",
 		Title:   "PROD 接口告警",
 		At:      []string{},
-		IsAtAll: true,
+		IsAtAll: false,
 		ErrHandler: func(err error) {
 			// 在这里不能使用 logrus 的 std 实例，否则会死锁
 			logs.Println("钉钉通知失败", err)
