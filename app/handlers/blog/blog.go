@@ -48,7 +48,7 @@ func CI(c *gin.Context) {
 		Md:      md,
 		Title:   "Blog CI/CD",
 		At:      []string{},
-		IsAtAll: true,
+		IsAtAll: false,
 	})
 	return
 }
