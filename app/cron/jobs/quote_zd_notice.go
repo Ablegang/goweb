@@ -24,6 +24,7 @@ func (job *QuoteZdNotice) GetTime() []string {
 		"*/5 30-59 9 * * mon-fri",
 		"*/5 0-30 11 * * mon-fri",
 		"*/5 * 10,13,14 * * mon-fri",
+		"*/5 * 10,13,14 * * ?",
 	}
 }
 
@@ -58,7 +59,7 @@ func (job *QuoteZdNotice) GetHandler() func() {
 			})
 			_, _ = models.Show().Insert(&show.Notice{
 				Key:       n.Key,
-				Per:       int64(math.Floor(n.Percent * 100)),
+				Per:       job.getPerFlag(n),
 				CreatedAt: helper.JsonTime(time.Now()),
 			})
 		}

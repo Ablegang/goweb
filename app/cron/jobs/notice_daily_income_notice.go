@@ -35,6 +35,9 @@ func (job *QuoteDailyIncomeNotice) GetHandler() func() {
 		// 展示中标的列表
 		qs := make([]show.Quote, 0)
 		_ = models.Show().Where("status = ?", show2.DisplayState).Find(&qs)
+		if len(qs) <= 0 {
+			return
+		}
 		keys := collection.Collect(qs).Pluck("key").ToStringArray()
 
 		// 取远程数据

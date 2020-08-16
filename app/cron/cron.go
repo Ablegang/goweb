@@ -27,6 +27,7 @@ func Start() {
 			_, _ = c.AddFunc(time, job.GetHandler())
 		}
 	}
+	// TODO:建立 recover 机制
 	c.Start()
 }
 
