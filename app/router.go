@@ -26,7 +26,7 @@ func registerRoute(r *gin.Engine) {
 // 博客路由
 func blogRouter(r *gin.RouterGroup) {
 	// CI
-	r.POST("ci", blog.CI)
+	r.Any("ci", blog.CI)
 }
 
 // show 路由

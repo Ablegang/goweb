@@ -12,8 +12,12 @@ import (
 
 // CI
 func CI(c *gin.Context) {
+	c.JSON(200, c.Request)
+	c.Abort()
+	return
+
 	// hook 校验
-	hook, _ := github.New(github.Options.Secret(os.Getenv("GITHUB_WEBHOOK_BLOG_SECRET")))
+	hook, _ := github.New(github.Options.Secret(os.Getenv("GITEE_WEBHOOK_BLOG_SECRET")))
 	payload, err := hook.Parse(c.Request, github.PushEvent, github.PingEvent)
 	if err != nil {
 		logrus.Errorln("BLOG CI 失败", err)
@@ -43,10 +47,10 @@ func CI(c *gin.Context) {
 	md += "- Email：" + data.HeadCommit.Committer.Email + "\n"
 	md += "- 社区名：" + data.HeadCommit.Committer.Username + "\n"
 	dingrobot.Markdown(&dingrobot.MarkdownParams{
-		Ac: os.Getenv("BLOG_DING_ACCESS_TOKEN"),
-		Md: md,
-		Title: "Blog CI/CD",
-		At: []string{},
+		Ac:      os.Getenv("BLOG_DING_ACCESS_TOKEN"),
+		Md:      md,
+		Title:   "Blog CI/CD",
+		At:      []string{},
 		IsAtAll: true,
 	})
 	return
