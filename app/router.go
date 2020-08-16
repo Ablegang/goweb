@@ -9,6 +9,10 @@ import (
 
 // 注册路由
 func registerRoute(r *gin.Engine) {
+	r.GET("/", func(c *gin.Context) {
+		c.String(200, "404")
+	})
+
 	// 跨域处理
 	r.Use(Cors())
 
