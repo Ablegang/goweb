@@ -26,5 +26,5 @@ quotes:
 	@go run pkg/commands/quotes.go
 
 # make blog
-blog:
-	@sh shell/blog_master.sh
+blog/%:
+	@m=$* sh shell/blog_master.sh
