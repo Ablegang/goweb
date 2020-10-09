@@ -5,6 +5,7 @@ import (
 	"goweb/pkg/dingrobot"
 	"io"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -48,6 +49,11 @@ func NewCustomFileWriter() *CustomFileWriter {
 
 // 日志切割
 func (writer *CustomFileWriter) Write(p []byte) (n int, err error) {
+
+	// 路径校验
+	if isInvalidDir(writer.Dir) {
+		return 0, errors.New("错误的路径")
+	}
 
 	// 建立目录
 	_ = os.MkdirAll(writer.Dir, writer.Perm)
@@ -96,6 +102,11 @@ func (writer *CustomFileWriter) open() (*os.File, error) {
 		return nil, errors.New("错误的 LogMode")
 	}
 
+	// 路径校验
+	if isInvalidDir(writer.Dir) {
+		return nil, errors.New("错误的路径")
+	}
+
 	// 打开文件
 	f, err := os.OpenFile(writer.Dir+fileName, os.O_APPEND|os.O_RDWR|os.O_CREATE, writer.Perm)
 	if err != nil {
@@ -103,4 +114,18 @@ func (writer *CustomFileWriter) open() (*os.File, error) {
 	}
 
 	return f, nil
+}
+
+// 是否非法路径
+func isInvalidDir(dir string) bool {
+
+	if strings.Contains(dir, "../") || strings.Contains(dir, "..\\") {
+		return true
+	}
+
+	if strings.Index(dir, "storage/") != 0 && strings.Index(dir, "storage\\") != 0 {
+		return true
+	}
+
+	return false
 }
