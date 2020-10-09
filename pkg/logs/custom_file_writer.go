@@ -103,7 +103,7 @@ func (writer *CustomFileWriter) open() (*os.File, error) {
 	}
 
 	// 路径校验
-	if isInvalidDir(writer.Dir) {
+	if isInvalidDir(writer.Dir+fileName) {
 		return nil, errors.New("错误的路径")
 	}
 
