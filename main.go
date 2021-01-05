@@ -1,8 +1,6 @@
 package main
 
-import (
-	"goweb/app"
-)
+import "goweb/app"
 
 func main() {
 	//driver, err := house.New(house.HzGovResource)
@@ -11,7 +9,7 @@ func main() {
 	//	return
 	//}
 	//
-	//list, err1 := driver.GetList("六塘公寓", "1")
+	//list, err1 := driver.GetList("金雅苑", "1")
 	//if err1 != nil {
 	//	fmt.Println(err1.Error())
 	//}
