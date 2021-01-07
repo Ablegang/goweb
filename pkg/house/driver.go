@@ -21,7 +21,7 @@ type Data struct {
 	SellManName  string  `json:"gplxrxm"`  // 挂牌人姓名
 	HouseArea    float64 `json:"jzmj"`     // 房产大小
 	UploadDate   string  `json:"scgpshsj"` // 挂牌时间
-	SellPrice    int     `json:"wtcsjg"`   // 委托出售价格
+	SellPrice    float64 `json:"wtcsjg"`   // 委托出售价格
 }
 
 // 列表结构体
