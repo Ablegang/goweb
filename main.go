@@ -12,8 +12,8 @@ func main() {
 		return
 	}
 
-	// 金雅苑，六塘公寓，景城花园，吉兴公寓，野风海天城，梦琴湾，湖景居
-	list, err1 := driver.GetList("野风海天城", "1")
+	// 金雅苑，六塘公寓，景城花园，吉兴公寓，野风海天城，梦琴湾，湖景居，庭院深深，闲林山水，金都雅苑，恒厚阳光城
+	list, err1 := driver.GetList("金岸提香", "1")
 	if err1 != nil {
 		fmt.Println(err1.Error())
 	}
