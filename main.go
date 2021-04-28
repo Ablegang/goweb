@@ -23,7 +23,7 @@ func main() {
 			fmt.Println(
 				v.UploadDate,
 				fmt.Sprintf("%.2f", v.SellPrice/v.HouseArea)+"万/平",
-				fmt.Sprintf("%.2f",v.HouseArea),
+				fmt.Sprintf("%.2f", v.HouseArea),
 				v.SellPrice,
 			)
 		}
